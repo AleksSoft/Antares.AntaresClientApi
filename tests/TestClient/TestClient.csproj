@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Antares.AntaresClientApi.TestClient</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AntaresClientApi.ApiClient\AntaresClientApi.ApiClient.csproj" />
+    <ProjectReference Include="..\..\src\AntaresClientApi.ApiContract\AntaresClientApi.ApiContract.csproj" />
+  </ItemGroup>
+
+</Project>

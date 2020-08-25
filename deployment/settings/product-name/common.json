@@ -1,0 +1,7 @@
+{
+  "RabbitMq": {
+    "HostUrl": "rabbit.antares.svc.cluster.local",
+    "Username": "${Antares-RabbitMq-Login}",
+    "Password": "${Antares-RabbitMq-Password}"
+  }
+}

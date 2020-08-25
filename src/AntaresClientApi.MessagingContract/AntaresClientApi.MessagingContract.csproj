@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Swisschain.Antares.AntaresClientApi.MessagingContract</AssemblyName>
+    <PackageId>Swisschain.Antares.AntaresClientApi.MessagingContract</PackageId>
+    <RootNamespace>Swisschain.Antares.AntaresClientApi.MessagingContract</RootNamespace>
+    <Authors>Swisschain</Authors>
+    <Product>Antares</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SourceLink.Create.CommandLine" Version="2.8.3" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>

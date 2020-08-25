@@ -1,0 +1,1328 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Swisschain.Lykke.AntaresWalletApi.ApiContract";
+
+package antaresWallet;
+
+service ApiService {
+	rpc AssetsDictionary (google.protobuf.Empty) returns (AssetsDictionaryResponse);
+    // GET (v2) /api/assets/baseAsset
+    rpc GetBaseAsset (google.protobuf.Empty) returns (BaseAssetResponse);
+    // POST (v2) /api/assets/baseAsset
+    rpc SetBaseAsset (BaseAssetUpdateRequest) returns (EmptyResponseV2);
+    // GET (v2) /api/AssetPairs
+    rpc GetAssetPairs (google.protobuf.Empty) returns (AssetPairsResponse);
+    rpc GetPrices (PricesRequest) returns (PricesResponse);
+    rpc GetCandles (CandlesRequest) returns (CandlesResponse);
+    rpc GetBalances (google.protobuf.Empty) returns (BalancesResponse);
+    rpc GetOrderbook (OrderbookRequest) returns (Orderbook);
+    // GET (v2) /api/markets
+    rpc GetMarkets (MarketsRequest) returns (MarketsResponse);
+    // GET	/api/Client/pendingActions
+    rpc GetPendingActions(google.protobuf.Empty) returns (PendingActionsResponse);
+    rpc GetAmountInBaseAsset(AmountInBaseRequest) returns (AmountInBaseAssetResponse);
+
+    // GET	/api/PushSettings
+    rpc GetPushSettings(google.protobuf.Empty) returns (PushSettingsResponse);
+    // POST	/api/PushSettings
+    rpc SetPushSettings(PushSettingsRequest) returns (EmptyResponse);
+
+    // POST /api/Antares/email/send
+    rpc SendVerificationEmail(VerificationEmailRequest) returns (VerificationEmailResponse);
+    // POST /api/Antares/email/verify
+    rpc VerifyEmail(VerifyEmailRequest) returns (VerifyResponse);
+    // POST /api/Antares/phone/send
+    rpc SendVerificationSms(VerificationSmsRequest) returns (EmptyResponse);
+    // POST /api/Antares/phone/verify
+    rpc VerifyPhone(VerifyPhoneRequest) returns (VerifyResponse);
+    // POST /api/Antares/register
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+
+    rpc Login(LoginRequest) returns (LoginResponse);
+    // GET /api/Client/codes
+    rpc SendLoginSms(LoginSmsRequest) returns (EmptyResponse);
+    // POST /api/Client/codes
+    rpc VerifyLoginSms(VerifyLoginSmsRequest) returns (VerifyLoginSmsResponse);
+    rpc CheckPin(CheckPinRequest) returns (CheckPinResponse);
+
+    rpc IsSessionExpired(CheckSessionRequest) returns (CheckSessionResponse);
+    rpc ProlongateSession(google.protobuf.Empty) returns (EmptyResponse);
+
+    // GET /api/offchain/limit/list
+    rpc GetOrders (LimitOrdersRequest) returns (LimitOrdersResponse);
+    // POST /api/HotWallet/limitOrder
+    rpc PlaceLimitOrder (LimitOrderRequest) returns (PlaceOrderResponse);
+    // POST /api/HotWallet/marketOrder
+    rpc PlaceMarketOrder (MarketOrderRequest) returns (PlaceOrderResponse);
+    rpc CancelAllOrders (CancelOrdersRequest) returns (CancelOrderResponse);
+    rpc CancelOrder (CancelOrderRequest) returns (CancelOrderResponse);
+    // GET (v2) /api/History/{walletId}/trades
+    rpc GetTrades (TradesRequest) returns (TradesResponse);
+    // GET (v2) /api/History/wallet/{walletId}
+    rpc GetAssetTrades (AssetTradesRequest) returns (AssetTradesResponse);
+    // GET (v2) /api/History/{walletId}/funds
+    rpc GetFunds (FundsRequest) returns (FundsResponse);
+    // GET (v2) /api/History/crypto/{assetId}/transactions/{transactionHash}/links
+    rpc GetExplorerLinks (ExplorerLinksRequest) returns (ExplorerLinksResponse);
+
+    // GET (public api) /api/Trades/{assetPairId}
+    rpc GetPublicTrades(PublicTradesRequest) returns (PublicTradesResponse);
+
+    // GET /api/WatchLists
+    rpc GetWatchlists(google.protobuf.Empty) returns (WatchlistsResponse);
+    // GET /api/WatchLists/{id}
+    rpc GetWatchlist(WatchlistRequest) returns (WatchlistResponse);
+    // POST /api/WatchLists
+    rpc AddWatchlist(AddWatchlistRequest) returns (WatchlistResponse);
+    // PUT /api/WatchLists
+    rpc UpdateWatchlist(UpdateWatchlistRequest) returns (WatchlistResponse);
+    // DELETE /api/WatchLists
+    rpc DeleteWatchlist(DeleteWatchlistRequest) returns (DeleteWatchlistResponse);
+
+    // GET /api/Tiers/Info
+    rpc GetTierInfo(google.protobuf.Empty) returns (TierInfoRespone);
+    // GET /api/PersonalData
+    rpc GetPersonalData(google.protobuf.Empty) returns (PersonalDataResponse);
+    // GET /api/KycProfiles/LykkeEurope/documents
+    rpc GetKycDocuments(google.protobuf.Empty) returns (KycDocumentsResponse);
+    // POST (v2) /api/client/address
+    rpc SetAddress(SetAddressRequest) returns (EmptyResponseV2);
+    // POST (v2) /api/client/zip
+    rpc SetZip(SetZipRequest) returns (EmptyResponseV2);
+    //POST /api/KycFiles?documentType={documentType}}&fileType=
+    rpc UploadKycFile(KycFileRequest) returns (EmptyResponse);
+    //GET /api/Tiers/questionnaire
+    rpc GetQuestionnaire(google.protobuf.Empty) returns (QuestionnaireResponse);
+    //POST /api/Tiers/questionnaire
+    rpc SaveQuestionnaire(AnswersRequest) returns (EmptyResponse);
+    //POST /api/KycProfiles/LykkeEurope?tier={tier}
+    rpc SubmitProfile(SubmitProfileRequest) returns (EmptyResponse);
+
+    // GET /api/Wallets
+    rpc GetWallets(google.protobuf.Empty) returns (WalletsResponse);
+    // GET /api/Wallets/{assetId}
+    rpc GetWallet(WalletRequest) returns (WalletResponse);
+    // POST /api/Wallets
+    rpc GenerateWallet(GenerateWalletRequest) returns (GenerateWalletResponse);
+    // POST (v2) t/api/Deposits/crypto/{assetId}/address
+    rpc GenerateWalletV2(GenerateWalletV2Request) returns (EmptyResponseV2);
+    // GET /api/SwiftCredentials/{assetId}
+    rpc GetSwiftCredentials(SwiftCredentialsRequest) returns (SwiftCredentialsResponse);
+    // POST /api/BankTransferRequest
+    rpc SendBankTransferRequest(BankTransferRequest) returns (EmptyResponse);
+    // GET /api/CountryPhoneCodes
+    rpc GetCountryPhoneCodes(google.protobuf.Empty) returns (CountryPhoneCodesResponse);
+    // GET /api/BankCardPaymentUrlFormValues
+    rpc GetBankCardPaymentDetails(google.protobuf.Empty) returns (BankCardPaymentDetailsResponse);
+    // POST /api/BankCardPaymentUrl
+    rpc GetBankCardPaymentUrl(BankCardPaymentUrlRequest) returns (BankCardPaymentUrlResponse);
+    // GET /api/Ethereum/settings
+    rpc GetEthereumSettings(google.protobuf.Empty) returns (EthereumSettingsResponse);
+    // GET (v2) /api/Deposits/crypto/{assetId}/address
+    rpc GetCryptoDepositAddress(CryptoDepositAddressRequest) returns (CryptoDepositAddressResponse);
+    // GET (v2) /api/withdrawals/crypto/{assetId}/info
+    rpc GetWithdrawalCryptoInfo(WithdrawalCryptoInfoRequest) returns (WithdrawalCryptoInfoResponse);
+
+    // GET /api/offchain/cashout/swift
+    rpc GetSwiftCashoutInfo(google.protobuf.Empty) returns (SwiftCashoutInfoResponse);
+    // GET /api/offchain/cashout/swift/fee/{assetId}/{countryCode}
+    rpc GetSwiftCashoutFee(SwiftCashoutFeeRequest) returns (SwiftCashoutFeeResponse);
+    // GET /api/Offchain/channelkey?asset={assetId}
+    rpc GetOffchainChannelKey(OffchainChannelKeyRequest) returns (OffchainChannelKeyResponse);
+    // POST /api/offchain/cashout/swift
+    rpc SwiftCashout(SwiftCashoutRequest) returns (SwiftCashoutResponse);
+    // POST /api/Offchain/finalizetransfer
+    rpc FinalizeSwiftCashout(SwiftCashoutFinalizeRequest) returns (SwiftCashoutFinalizeResponse);
+    // POST /api/HotWallet/cashout
+    rpc CryptoCashout(CryptoCashoutRequest) returns (EmptyResponse);
+
+    // GET /api/AppSettings
+    rpc GetAppSettings(google.protobuf.Empty) returns (AppSettingsResponse);
+
+    // GET /api/PrivateWallet
+    rpc GetPrivateWallets(google.protobuf.Empty) returns (PrivateWalletsResponse);
+
+    rpc GetPriceUpdates (PriceUpdatesRequest) returns (stream PriceUpdate);
+    rpc GetCandleUpdates (CandleUpdatesRequest) returns (stream CandleUpdate);
+    rpc GetOrderbookUpdates (OrderbookUpdatesRequest) returns (stream Orderbook);
+    rpc GetPublicTradeUpdates (PublicTradesUpdatesRequest) returns (stream PublicTradeUpdate);
+}
+
+message BaseAssetUpdateRequest {
+    string baseAssetId = 1;
+}
+
+message PricesRequest {
+    repeated string assetPairIds = 1;
+}
+
+message PriceUpdatesRequest {
+    repeated string assetPairIds = 1;
+}
+message CandlesRequest {
+    string assetPairId = 1;
+    CandleType type = 2;
+    CandleInterval interval = 3;
+    google.protobuf.Timestamp from = 4;
+    google.protobuf.Timestamp to = 5;
+}
+
+message OrderbookRequest {
+    string assetPairId = 1;
+}
+
+message AmountInBaseRequest {
+    string assetId = 1;
+}
+
+message PushSettingsRequest {
+    bool enabled = 1;
+}
+
+message VerificationEmailRequest {
+    string email = 1;
+}
+
+message VerificationSmsRequest {
+    string phone = 1;
+    string token = 2;
+}
+
+message VerifyEmailRequest {
+    string email = 1;
+    string code = 2;
+    string token = 3;
+}
+
+message VerifyPhoneRequest {
+    string phone = 1;
+    string code = 2;
+    string token = 3;
+}
+
+message RegisterRequest {
+    string fullName = 1;
+    string email = 2;
+    string phone = 3;
+    string password = 4;
+    string hint = 5;
+    string countryIso3Code = 6;
+    string affiliateCode = 7;
+    string pin = 8;
+    string token = 9;
+    string publicKey = 10;
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+    string publicKey = 3;
+}
+
+message LoginSmsRequest {
+    string sessionId = 1;
+}
+
+message VerifyLoginSmsRequest {
+    string sessionId = 1;
+    string code = 2;
+}
+
+message CheckPinRequest {
+    string sessionId = 1;
+    string pin = 2;
+}
+
+message CheckSessionRequest {
+    string sessionId = 1;
+}
+
+message MarketsRequest {
+    oneof optional_assetPairId {
+        string assetPairId = 1;
+    }
+}
+
+message LimitOrdersRequest {
+    oneof optional_assetPairId {
+        string assetPairId = 1;
+    }
+}
+
+message LimitOrderRequest {
+    string assetPairId = 1;
+    string assetId = 2;
+    double volume = 3;
+    double price = 4;
+}
+
+message MarketOrderRequest {
+    string assetPairId = 1;
+    string assetId= 2;
+    double volume = 3;
+}
+
+message CancelOrdersRequest {
+    string assetPairId = 1;
+    oneof optional_side {
+        Side side = 2;
+    }
+}
+
+message CancelOrderRequest {
+    string orderId = 1;
+}
+
+message TradesRequest {
+    oneof optional_assetPairId {
+        string assetPairId = 1;
+    }
+    int32 take = 2;
+    int32 skip = 3;
+    oneof optional_fromDate {
+        google.protobuf.Timestamp from = 4;
+    }
+    oneof optional_toDate {
+        google.protobuf.Timestamp to = 5;
+    }
+    oneof optional_tradeType {
+        string tradeType = 6;
+    }
+}
+
+message AssetTradesRequest {
+    string assetId = 1;
+    int32 take = 2;
+    int32 skip = 3;
+}
+
+message FundsRequest {
+    oneof optional_assetId {
+        string assetId = 1;
+    }
+    int32 take = 2;
+    int32 skip = 3;
+    oneof optional_fromDate {
+        google.protobuf.Timestamp from = 4;
+    }
+    oneof optional_toDate {
+        google.protobuf.Timestamp to = 5;
+    }
+}
+
+message ExplorerLinksRequest {
+    string assetId = 1;
+    string transactionHash = 2;
+}
+
+message PublicTradesRequest {
+    string assetPairId = 1;
+    int32 skip = 2;
+    int32 take = 3;
+}
+
+message WatchlistRequest {
+    string id = 1;
+}
+
+message AddWatchlistRequest {
+    string name = 1;
+    int32 order = 2;
+    repeated string assetIds = 3;
+}
+
+message UpdateWatchlistRequest {
+    string id = 1;
+    string name = 2;
+    int32 order = 3;
+    repeated string assetIds = 4;
+}
+
+message DeleteWatchlistRequest {
+    string id = 1;
+}
+
+message SetAddressRequest {
+    string address = 1;
+}
+
+message SetZipRequest {
+    string zip = 1;
+}
+
+message KycFileRequest {
+    string documentType = 1;
+    string filename = 2;
+    bytes file = 3;
+}
+
+message AnswersRequest {
+    repeated Choice answers = 1;
+
+    message Choice {
+        string questionId = 1;
+        repeated string answerIds = 2;
+        string other = 3;
+    }
+}
+
+message SubmitProfileRequest {
+    oneof optional_tier {
+        TierUpgrade tier = 1;
+    }
+}
+
+enum TierUpgrade {
+    Advanced = 0;
+    ProIndividual = 1;
+}
+
+message WalletRequest {
+    string assetId = 1;
+}
+
+message GenerateWalletRequest {
+    string assetId = 1;
+    BcnWalletRequest bcnWallet = 2;
+
+    message BcnWalletRequest {
+        string address = 1;
+        string encodedKey = 2;
+        string publicKey = 3;
+    }
+}
+
+message GenerateWalletV2Request {
+    string assetId = 1;
+}
+
+message SwiftCredentialsRequest {
+    string assetId = 1;
+}
+
+message BankTransferRequest {
+    string assetId = 1;
+    double balanceChange = 2;
+}
+
+message BankCardPaymentUrlRequest {
+    string address = 1;
+    string amount = 2;
+    string assetId = 3;
+    string city = 4;
+    string country = 5;
+    string email = 6;
+    string firstName = 7;
+    string lastName = 8;
+    string phone = 9;
+    string zip = 10;
+    string depositOption = 11;
+}
+
+message CryptoDepositAddressRequest {
+    string assetId = 1;
+}
+
+message WithdrawalCryptoInfoRequest {
+    string assetId = 1;
+}
+
+message SwiftCashoutFeeRequest {
+    string assetId = 1;
+    string countryCode = 2;
+}
+
+message OffchainChannelKeyRequest {
+    string assetId = 1;
+}
+
+message SwiftCashoutRequest {
+    string amount = 1;
+    string asset = 2;
+    string prevTempPrivateKey = 3;
+    string bic = 4;
+    string accNumber = 5;
+    string accName = 6;
+    string accHolderAddress = 7;
+    string bankName = 8;
+    string accHolderCountry = 9;
+    string accHolderZipCode = 10;
+    string accHolderCity = 11;
+}
+
+message SwiftCashoutFinalizeRequest {
+    string transferId = 1;
+    string clientRevokePubKey = 2;
+    string clientRevokeEncryptedPrivateKey = 3;
+    string signedTransferTransaction = 4;
+}
+
+message CryptoCashoutRequest {
+    string assetId = 1;
+    string volume = 2;
+    string destinationAddress = 3;
+    string destinationAddressExtension = 4;
+}
+
+message CandleUpdatesRequest {
+    string assetPairId = 1;
+    CandleType type = 2;
+    CandleInterval interval = 3;
+}
+
+message OrderbookUpdatesRequest {
+    string assetPairId = 1;
+}
+
+message PublicTradesUpdatesRequest {
+    string assetPairId = 1;
+}
+
+enum Side {
+    buy = 0;
+    sell = 1;
+}
+
+enum CandleType {
+    Bid = 0;
+    Ask = 1;
+    Mid = 2;
+    Trades = 3;
+}
+
+enum CandleInterval {
+    Min5 = 0;
+    Min15 = 1;
+    Min30 = 2;
+    Hour = 3;
+    Hour4 = 4;
+    Hour6 = 5;
+    Hour12 = 6;
+    Day = 7;
+    Week = 8;
+    Month = 9;
+}
+
+message PricesResponse {
+    repeated PriceUpdate prices = 1;
+}
+
+message AssetsDictionaryResponse {
+	repeated AssetCategory categories = 1;
+	repeated Asset assets = 2;
+}
+
+message BaseAssetResponse {
+    BaseAsset baseAsset = 1;
+    ErrorV2 error = 2;
+
+    message BaseAsset {
+        string assetId = 1;
+    }
+}
+
+message AssetPairsResponse {
+    repeated AssetPair assetPairs = 1;
+    ErrorV2 error = 2;
+}
+
+message CandlesResponse {
+    repeated Candle candles = 1;
+}
+
+message BalancesResponse {
+    repeated Balance payload = 1;
+    Error error = 2;
+}
+
+message MarketsResponse {
+    repeated MarketModel markets = 1;
+    ErrorV2 error = 2;
+
+    message MarketModel {
+        string assetPair = 1;
+        string volume24H = 2;
+        string priceChange24H = 3;
+        string lastPrice = 4;
+        string bid = 5;
+        string ask = 6;
+        string high = 7;
+        string low = 8;
+    }
+}
+
+message PendingActionsResponse {
+    PendingActionsPayload result = 1;
+    ErrorV1 error = 2;
+
+    message PendingActionsPayload {
+        bool unsignedTxs = 1;
+        bool offchainRequests = 2;
+        bool needReinit = 3;
+        bool dialogPending = 4;
+        bool pendingOperations = 5;
+        bool ethereumPendingActions = 6;
+        bool sessionConfirmation = 7;
+    }
+}
+
+message AmountInBaseAssetResponse {
+    repeated AmountInBasePayload values = 1;
+
+    message AmountInBasePayload {
+        string assetId = 1;
+        string amountInBase = 2;
+    }
+}
+
+message PushSettingsResponse {
+    PushSettingsPayload result = 1;
+    ErrorV1 error = 2;
+
+    message PushSettingsPayload {
+        bool enabled = 1;
+    }
+}
+
+message VerificationEmailResponse {
+    VerificationEmailPayload result = 1;
+    ErrorV1 error = 2;
+
+    message VerificationEmailPayload {
+        string token = 1;
+    }
+}
+
+message VerifyResponse {
+    VerifyPayload result = 1;
+    ErrorV1 error = 2;
+
+    message VerifyPayload {
+        bool passed = 1;
+    }
+}
+
+message RegisterResponse {
+    RegisterPayload result = 1;
+    ErrorV1 error = 2;
+
+    message RegisterPayload {
+        string sessionId = 1;
+        string notificationsId = 2;
+        PersonalData personalData = 3;
+        bool canCashInViaBankCard = 4;
+        bool swiftDepositEnabled = 5;
+        string state = 6;
+    }
+}
+
+message LoginResponse {
+    LoginPayload result = 1;
+    ErrorV1 error = 2;
+
+    message LoginPayload {
+        string sessionId = 1;
+        string notificationId = 2;
+    }
+}
+
+message VerifyLoginSmsResponse {
+    VerifyLoginSmsPayload result = 1;
+    ErrorV1 error = 2;
+
+    message VerifyLoginSmsPayload {
+        bool passed = 1;
+    }
+}
+
+message CheckPinResponse {
+    CheckPinPayload result = 1;
+    ErrorV1 error = 2;
+
+    message CheckPinPayload {
+        bool passed = 1;
+    }
+}
+
+message CheckSessionResponse {
+    bool expired = 1;
+}
+
+message LimitOrdersResponse {
+    OrdersPayload result = 1;
+    ErrorV1 error = 2;
+
+    message OrdersPayload {
+        repeated LimitOrderModel orders = 1;
+    }
+}
+
+message PlaceOrderResponse {
+    OrderPayload result = 1;
+    ErrorV1 error = 2;
+
+    message OrderPayload {
+        OrderModel order = 1;
+    }
+}
+
+message OrderModel {
+    string id = 1;
+    string dateTime = 2;
+    string orderType = 3;
+    string volume = 4;
+    string price = 5;
+    string asset = 6;
+    string assetPair = 7;
+    string totalCost = 8;
+}
+
+message LimitOrderModel {
+    string id = 1;
+    string dateTime = 2;
+    string orderType = 3;
+    string volume = 4;
+    string price = 5;
+    string asset = 6;
+    string assetPair = 7;
+    string totalCost = 8;
+    string remainingVolume = 9;
+    string remainingOtherVolume = 10;
+}
+
+message CancelOrderResponse {
+    bool payload = 1;
+    Error error = 2;
+}
+
+message TradesResponse {
+    repeated TradeModel trades = 1;
+    ErrorV2 error = 2;
+
+    message TradeModel {
+        string id = 1;
+        string orderId = 2;
+        string assetPairId = 3;
+        string price = 4;
+        string direction = 5;
+        string baseAssetName = 6;
+        string baseVolume = 7;
+        string quoteAssetName = 8;
+        string quoteVolume = 9;
+        google.protobuf.Timestamp timestamp = 10;
+    }
+}
+
+message AssetTradesResponse {
+    repeated AssetTradeModel trades = 1;
+    ErrorV2 error = 2;
+
+    message AssetTradeModel {
+        string id = 1;
+        string assetId = 2;
+        string assetPairId = 3;
+        string price = 4;
+        string amount = 5;
+        google.protobuf.Timestamp timestamp = 10;
+    }
+}
+
+message FundsResponse {
+    repeated FundsModel funds = 1;
+    ErrorV2 error = 2;
+
+    message FundsModel {
+        string id = 1;
+        string assetId = 2;
+        string assetName = 3;
+        string volume = 4;
+        string operation = 5;
+        string type = 6;
+        string status = 7;
+        google.protobuf.Timestamp timestamp = 8;
+        string blockchainHash = 9;
+    }
+}
+
+message ExplorerLinksResponse {
+    repeated ExplorerLinkModel links = 1;
+    ErrorV2 error = 2;
+
+    message ExplorerLinkModel {
+        string url = 1;
+        string name = 2;
+    }
+}
+
+message PublicTradesResponse {
+    repeated PublicTrade result = 1;
+    ErrorV1 error = 2;
+}
+
+message PublicTrade {
+    string id = 1;
+    string assetPairId = 2;
+    google.protobuf.Timestamp dateTime = 3;
+    string volume = 4;
+    string price = 5;
+    string action = 6;
+}
+
+message WatchlistsResponse {
+    repeated Watchlist result = 1;
+    ErrorV1 error = 2;
+}
+
+message WatchlistResponse {
+    Watchlist result = 1;
+    ErrorV1 error = 2;
+}
+
+message DeleteWatchlistResponse {
+    ErrorV1 error = 1;
+}
+
+message TierInfoRespone {
+    TierInfoPayload result = 1;
+    ErrorV1 error = 2;
+}
+
+message PersonalDataResponse {
+    PersonalData result = 1;
+    ErrorV1 error = 2;
+}
+
+message PersonalData {
+    string fullName = 1;
+    string firstName = 2;
+    string lastName = 3;
+    string email = 4;
+    string phone = 5;
+    string country = 6;
+    string address = 7;
+    string city = 8;
+    string zip = 9;
+}
+
+message KycDocumentsResponse {
+    map<string, KycDocument> result = 1;
+    ErrorV1 error = 2;
+
+    message KycDocument {
+        string id = 1;
+        string type = 2;
+        string status = 3;
+        string rejectReason = 4;
+        repeated KycFile files = 5;
+    }
+
+    message KycFile {
+        string id = 1;
+        string type = 2;
+        string title = 3;
+        string contentType = 4;
+        string fileName = 5;
+    }
+}
+
+message QuestionnaireResponse {
+    QuestionnairePayload result = 1;
+    ErrorV1 error = 2;
+
+    message QuestionnairePayload {
+        repeated Question questionnaire = 1;
+    }
+
+    message Question {
+        string id = 1;
+        string text = 2;
+        string type = 3;
+        bool required = 4;
+        bool hasOther = 5;
+        repeated Answer answers = 6;
+    }
+
+    message Answer {
+        string id = 1;
+        string text = 2;
+    }
+}
+
+message TierInfoPayload {
+    CurrentTier currentTier = 1;
+    NextTier nextTier = 2;
+    UpgradeRequest upgradeRequest = 3;
+    bool questionnaireAnswered = 4;
+}
+
+message WalletsResponse {
+    GetWalletsPayload result = 1;
+    ErrorV1 error = 2;
+
+    message GetWalletsPayload {
+        LykkeWalletsPayload lykke = 1;
+        string multiSig = 2;
+        string coloredMultiSig = 3;
+        string solarCoinAddress = 4;
+    }
+
+    message LykkeWalletsPayload {
+        repeated WalletAsset assets = 1;
+        string equity = 2;
+    }
+
+    message WalletAsset {
+        string id = 1;
+        string name = 2;
+        string balance = 3;
+        string symbol = 4;
+        string assetPairId = 5;
+        bool hideIfZero = 6;
+        string issuerId = 7;
+        int32 accuracy = 8;
+        string categoryId = 9;
+        string amountInBase = 10;
+        string reserved = 11;
+    }
+}
+
+message WalletResponse {
+    WalletPayload result = 1;
+    ErrorV1 error = 2;
+
+    message WalletPayload {
+        string id = 1;
+        string name = 2;
+        string balance = 3;
+        string symbol = 4;
+        string assetPairId = 5;
+        bool hideIfZero = 6;
+        string issuerId = 7;
+        int32 accuracy = 8;
+        string categoryId = 9;
+        string amountInBase = 10;
+        string reserved = 11;
+    }
+}
+
+message GenerateWalletResponse {
+    WalletAddress result = 1;
+    ErrorV1 error = 2;
+
+    message WalletAddress {
+        string address = 1;
+        BcnAddressExtension addressExtension = 2;
+    }
+
+    message BcnAddressExtension {
+        string addressExtensionDisplayName = 1;
+        string baseAddressDisplayName = 2;
+        string depositAddressExtension = 3;
+        string typeForDeposit = 4;
+        string typeForWithdrawal = 5;
+    }
+}
+
+message SwiftCredentialsResponse {
+    SwiftCredentials result = 1;
+    ErrorV1 error = 2;
+
+    message SwiftCredentials {
+        string bic = 1;
+        string accountNumber = 2;
+        string accountName = 3;
+        string purposeOfPayment = 4;
+        string bankAddress = 5;
+        string companyAddress = 6;
+        string correspondentAccount = 7;
+    }
+}
+
+message CountryPhoneCodesResponse {
+    CountryPhoneCodes result = 1;
+    ErrorV1 error = 2;
+
+    message CountryPhoneCodes {
+        string current = 1;
+        repeated Country countriesList = 2;
+    }
+}
+
+message BankCardPaymentDetailsResponse {
+    BankCardPaymentDetails result = 1;
+    ErrorV1 error = 2;
+    message BankCardPaymentDetails {
+        double amount = 1;
+        string assetId = 2;
+        string walletId = 3;
+        string firstName = 4;
+        string lastName = 5;
+        string city = 6;
+        string zip = 7;
+        string address = 8;
+        string country = 9;
+        string email = 10;
+        string phone = 11;
+        string depositOption = 12;
+        string okUrl = 13;
+        string failUrl = 14;
+    }
+}
+
+message BankCardPaymentUrlResponse {
+    BankCardPaymentUrl result = 1;
+    ErrorV1 error = 2;
+
+    message BankCardPaymentUrl {
+        string url = 1;
+        string okUrl = 2;
+        string failUrl = 3;
+        string reloadRegex = 4;
+        string urlsToFormatRegex = 5;
+    }
+}
+
+message EthereumSettingsResponse {
+    EthereumSettings result = 1;
+    ErrorV1 error = 2;
+
+    message EthereumSettings {
+        int32 stepsCount = 1;
+        string ethAssetId = 2;
+        string stepGas = 3;
+        string minGas = 4;
+        string maxGas = 5;
+        string minGasPrice = 6;
+        string maxGasPrice = 7;
+        BitcoinFee bitcoin = 8;
+    }
+
+    message BitcoinFee {
+        string minFee = 1;
+        string maxFee = 2;
+    }
+}
+
+message CryptoDepositAddressResponse {
+    CryptoDepositAddress address = 1;
+    ErrorV2 error = 2;
+
+    message CryptoDepositAddress {
+        string address = 1;
+        string baseAddress = 2;
+        string addressExtension = 3;
+    }
+}
+
+message WithdrawalCryptoInfoResponse {
+    WithdrawalCryptoInfo withdrawalInfo = 1;
+    ErrorV2 error = 2;
+
+    message WithdrawalCryptoInfo {
+        string baseAddressTitle = 1;
+        bool addressExtensionMandatory = 2;
+        string addressExtensionTitle = 3;
+    }
+}
+
+message SwiftCashoutInfoResponse {
+    SwiftCashoutInfo result = 1;
+    ErrorV1 error = 2;
+
+    message SwiftCashoutInfo {
+        string bic = 1;
+        string accNumber = 2;
+        string accName = 3;
+        string bankName = 4;
+        string accHolderAddress = 5;
+        string accHolderCity = 6;
+        string accHolderCountry = 7;
+        string accHolderZipCode = 8;
+    }
+}
+
+message OffchainChannelKeyResponse {
+    OffchainChannel result = 1;
+    ErrorV1 error = 2;
+
+    message OffchainChannel {
+        string key = 1;
+    }
+}
+
+message SwiftCashoutResponse{
+    SwiftCashoutData result = 1;
+    ErrorV1 error = 2;
+
+    message SwiftCashoutData {
+        string transferId = 1;
+        string transactionHex = 2;
+        string operationResult = 3;
+    }
+}
+
+message SwiftCashoutFinalizeResponse {
+    OffchainTradeRespone result = 1;
+    ErrorV1 error = 2;
+
+    message OffchainTradeRespone {
+        string transferId = 1;
+        string transactionHex = 2;
+        string operationResult = 3;
+        OffchainOrder order = 4;
+    }
+
+    message OffchainOrder {
+        string id = 1;
+        string dateTime = 2;
+        string orderType = 3;
+        string volume = 4;
+        string price = 5;
+        string asset = 6;
+        string assetPair = 7;
+        string totalCost = 8;
+        string remainingVolume = 9;
+        string remainingOtherVolume = 10;
+    }
+}
+
+message AppSettingsResponse {
+    AppSettingsData result = 1;
+    ErrorV1 error = 2;
+
+    message AppSettingsData {
+        int32 RateRefreshPeriod = 1;
+        ApiAsset BaseAsset = 2;
+        bool signOrder = 3;
+        string DepositUrl = 4;
+        bool DebugMode = 5;
+        ApiRefundSettings RefundSettings = 6;
+        double MarketOrderPriceDeviation = 7;
+        ApiFeeSettings FeeSettings = 8;
+    }
+
+    message ApiAsset {
+        string id = 1;
+        string name = 2;
+        int32 accuracy = 3;
+        string symbol = 4;
+        bool hideWithdraw = 5;
+        bool hideDeposit = 6;
+        bool kycNeeded = 7;
+        bool bankCardsDepositEnabled = 8;
+        bool swiftDepositEnabled = 9;
+        bool blockchainDepositEnabled = 10;
+        bool otherDepositOptionsEnabled = 11;
+        string categoryId = 12;
+    }
+
+    message ApiRefundSettings {
+        string address = 1;
+    }
+
+    message ApiFeeSettings {
+        double BankCardsFeeSizePercentage = 1;
+        repeated CashOutFee CashOut = 2;
+    }
+}
+
+message PrivateWalletsResponse {
+    PrivateWalletsPayload result = 1;
+    ErrorV1 error = 2;
+
+    message PrivateWalletsPayload {
+        repeated PrivateWallet wallets = 1;
+    }
+}
+
+message PrivateWallet {
+    string address = 1;
+    string name = 2;
+    string encodedPrivateKey = 3;
+    bool isColdStorage = 4;
+    oneof optional_Number {
+        int32 number = 5;
+    }
+    string smallIconUrl = 6;
+    string mediumIconUrl = 7;
+    string largeIconUrl = 8;
+    repeated BalanceRecord balances = 9;
+    string blockchain = 10;
+}
+
+message BalanceRecord {
+    string assetId = 1;
+    string balance = 2;
+    string baseAssetId = 3;
+    string amountInBase = 4;
+}
+
+message CashOutFee {
+    string assetId = 1;
+    double size = 2;
+    string type = 3;
+}
+
+message SwiftCashoutFeeResponse {
+    SwiftCashoutFee result = 1;
+    ErrorV1 error = 2;
+
+    message SwiftCashoutFee {
+        string size = 1;
+        string assetId = 2;
+        string country = 3;
+    }
+}
+
+message CurrentTier {
+    string tier = 1;
+    string asset = 2;
+    string current = 3;
+    string maxLimit = 4;
+}
+
+message NextTier {
+    string tier = 1;
+    string maxLimit = 2;
+    repeated string documents = 3;
+}
+
+message UpgradeRequest {
+    string tier = 1;
+    string submitDate = 2;
+    string status = 3;
+    string limit = 4;
+}
+
+message AssetCategory {
+    string id = 1;
+    string name = 2;
+    string iconUrl = 3;
+}
+
+message Asset {
+    string id = 1;
+    string name = 2;
+    string symbol = 3;
+    string displayId = 4;
+    int32 accuracy = 5;
+    bool kycNeeded = 6;
+    string categoryId = 7;
+    bool cardDeposit = 8;
+    bool swiftDeposit = 9;
+    bool blockchainDeposit = 10;
+    bool swiftWithdrawal = 11;
+    bool forwardWithdrawal = 12;
+    bool crosschainWithdrawal = 13;
+    bool isTrusted = 14;
+    bool canBeBase = 15;
+    string iconUrl = 16;
+}
+
+message AssetPair {
+    string id = 1;
+    int32 accuracy = 2;
+    string baseAssetId = 3;
+    int32 invertedAccuracy = 4;
+    string name = 5;
+    string quotingAssetId = 6;
+}
+
+message PriceUpdate {
+    string assetPairId = 1;
+    string bid = 2;
+    string ask = 3;
+    google.protobuf.Timestamp timestamp = 4;
+    string volumeBase24H = 5;
+    string volumeQuote24H = 6;
+    string priceChange24H = 7;
+}
+
+message Candle {
+    string open = 1;
+    string close = 2;
+    string high = 3;
+    string low = 4;
+    string volume = 5;
+    string oppositeVolume = 6;
+    string lastPrice = 7;
+    google.protobuf.Timestamp timestamp = 8;
+}
+
+message CandleUpdate {
+    string open = 1;
+    string close = 2;
+    string high = 3;
+    string low = 4;
+    string volume = 5;
+    string oppositeVolume = 6;
+    string lastPrice = 7;
+    google.protobuf.Timestamp timestamp = 8;
+    google.protobuf.Timestamp updateTimestamp = 9;
+}
+
+message Orderbook {
+    string assetPairId = 1;
+    google.protobuf.Timestamp timestamp = 2;
+    repeated PriceVolume bids = 3;
+    repeated PriceVolume asks = 4;
+
+    message PriceVolume {
+        string p = 1;
+        string v = 2;
+    }
+}
+
+message PublicTradeUpdate {
+    repeated PublicTrade trades = 1;
+}
+
+message Balance {
+    string assetId = 1;
+    string available = 2;
+    string reserved = 3;
+    google.protobuf.Timestamp timestamp = 4;
+}
+
+message Watchlist {
+    string id = 1;
+    string name = 2;
+    int32 order = 3;
+    bool readonly = 5;
+    repeated string assetIds = 6;
+}
+
+message Country {
+    string id = 1;
+    string iso2 = 2;
+    string name = 3;
+    string prefix = 4;
+}
+
+message EmptyResponse {
+    ErrorV1 error = 1;
+}
+
+message EmptyResponseV2 {
+    ErrorV2 error = 1;
+}
+
+message Error {
+    string message = 1;
+    map<string, string> fields = 2;
+}
+
+message ErrorV1 {
+    string code = 1;
+    string field = 2;
+    string message = 3;
+    string details = 4;
+}
+
+message ErrorV2 {
+    string error = 1;
+    string message = 2;
+}
