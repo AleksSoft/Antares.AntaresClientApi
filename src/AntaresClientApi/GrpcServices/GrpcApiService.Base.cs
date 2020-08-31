@@ -12,6 +12,7 @@ namespace AntaresClientApi.GrpcServices
         private readonly IAuthService _authService;
         private readonly IRegistrationTokenService _registrationTokenService;
         private readonly IEmailVerification _emailVerification;
+        private readonly IPersonalData _personalData;
 
         public GrpcApiService(
             ISessionService sessionService, 
@@ -19,7 +20,8 @@ namespace AntaresClientApi.GrpcServices
             ILogger<GrpcApiService> logger,
             IAuthService authService,
             IRegistrationTokenService registrationTokenService,
-            IEmailVerification emailVerification)
+            IEmailVerification emailVerification,
+            IPersonalData personalData)
         {
             _sessionService = sessionService;
             _smsVerification = smsVerification;
@@ -27,6 +29,7 @@ namespace AntaresClientApi.GrpcServices
             _authService = authService;
             _registrationTokenService = registrationTokenService;
             _emailVerification = emailVerification;
+            _personalData = personalData;
         }
     }
 }

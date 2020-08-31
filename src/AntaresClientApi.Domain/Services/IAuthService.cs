@@ -9,11 +9,10 @@ namespace AntaresClientApi.Domain.Services
 
         Task<bool> CheckPin(string tenantId, string clientId, string pinHash);
 
-        Task<RegistrationResult> RegisterClientAsync(string requestEmail,
-            string requestPhone,
-            string requestFullName,
-            string requestCountryIso3Code,
-            string requestAffiliateCode,
+        Task<RegistrationResult> RegisterClientAsync(
+            string tenantId,
+            string clientId,
+            string requestEmail,
             string requestPassword,
             string requestHint,
             string requestPin);

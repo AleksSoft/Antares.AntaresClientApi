@@ -73,6 +73,10 @@ namespace AntaresClientApi
             builder.RegisterType<EmailVerificationMock>()
                 .As<IEmailVerification>()
                 .SingleInstance();
+
+            builder.RegisterType<PersonalDataMock>()
+                .As<IPersonalData>()
+                .SingleInstance();
         }
 
         private void MyNoSql(ContainerBuilder builder)

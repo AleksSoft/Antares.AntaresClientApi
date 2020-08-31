@@ -205,17 +205,34 @@ namespace AntaresClientApi.GrpcServices
 
             if (!token.RegistrationDone)
             {
-                var registrationResult = await _authService.RegisterClientAsync(
+                var identity = await _personalData.RegisterClientAsync(
                     request.Email,
                     request.Phone,
                     request.FullName,
                     request.CountryIso3Code,
-                    request.AffiliateCode,
+                    request.AffiliateCode);
+
+                if (identity == null)
+                {
+                    return new RegisterResponse()
+                    {
+                        Error = new ErrorV1()
+                        {
+                            Code = ErrorModelCode.RuntimeProblem.ToString(),
+                            Message = ErrorMessages.RuntimeProblemTryAgain
+                        }
+                    };
+                }
+
+                var registrationCreds = await _authService.RegisterClientAsync(
+                    identity.TenantId,
+                    identity.ClientId,
+                    request.Email,
                     request.Password,
                     request.Hint,
                     request.Pin);
 
-                if (registrationResult.IsEmailAlreadyExist)
+                if (registrationCreds.IsEmailAlreadyExist || registrationCreds.IsClientAlreadyExist)
                 {
                     return new RegisterResponse()
                     {
@@ -228,8 +245,8 @@ namespace AntaresClientApi.GrpcServices
                 }
 
                 token.LastCodeHash = string.Empty;
-                token.ClientId = registrationResult.ClientIdentity.ClientId;
-                token.TenantId = registrationResult.ClientIdentity.TenantId;
+                token.ClientId = registrationCreds.ClientIdentity.ClientId;
+                token.TenantId = registrationCreds.ClientIdentity.TenantId;
                 token.RegistrationDone = true;
                 await _registrationTokenService.SaveAsync(token);
             }

@@ -28,11 +28,9 @@ namespace AntaresClientApi.Domain.Services.Mock
             return pinHash == "1111".ToSha256();
         }
 
-        public async Task<RegistrationResult> RegisterClientAsync(string requestEmail,
-            string requestPhone,
-            string requestFullName,
-            string requestCountryIso3Code,
-            string requestAffiliateCode,
+        public async Task<RegistrationResult> RegisterClientAsync(string tenantId,
+            string clientId,
+            string requestEmail,
             string requestPassword,
             string requestHint,
             string requestPin)
