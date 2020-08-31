@@ -1,0 +1,47 @@
+﻿using System.Runtime.Serialization;
+
+namespace AntaresClientApi.GrpcServices
+{
+    public enum ErrorModelCode
+    {
+        [EnumMember(Value = "InvalidInputField")] InvalidInputField,
+        [EnumMember(Value = "InconsistentData")] InconsistentData,
+        [EnumMember(Value = "NotAuthenticated")] NotAuthenticated,
+        [EnumMember(Value = "InvalidUsernameOrPassword")] InvalidUsernameOrPassword,
+        [EnumMember(Value = "AssetNotFound")] AssetNotFound,
+        [EnumMember(Value = "NotEnoughFunds")] NotEnoughFunds,
+        [EnumMember(Value = "VersionNotSupported")] VersionNotSupported,
+        [EnumMember(Value = "RuntimeProblem")] RuntimeProblem,
+        [EnumMember(Value = "WrongConfirmationCode")] WrongConfirmationCode,
+        [EnumMember(Value = "BackupWarning")] BackupWarning,
+        [EnumMember(Value = "BackupRequired")] BackupRequired,
+        [EnumMember(Value = "MaintananceMode")] MaintananceMode,
+        [EnumMember(Value = "NoData")] NoData,
+        [EnumMember(Value = "ShouldOpenNewChannel")] ShouldOpenNewChannel,
+        [EnumMember(Value = "ShouldProvideNewTempPubKey")] ShouldProvideNewTempPubKey,
+        [EnumMember(Value = "ShouldProcesOffchainRequest")] ShouldProcesOffchainRequest,
+        [EnumMember(Value = "NoOffchainLiquidity")] NoOffchainLiquidity,
+        [EnumMember(Value = "GeneralError")] GeneralError,
+        [EnumMember(Value = "AddressShouldBeGenerated")] AddressShouldBeGenerated,
+        [EnumMember(Value = "ExpiredAccessToken")] ExpiredAccessToken,
+        [EnumMember(Value = "BadAccessToken")] BadAccessToken,
+        [EnumMember(Value = "NoEncodedMainKey")] NoEncodedMainKey,
+        [EnumMember(Value = "PreviousTransactionsWereNotCompleted")] PreviousTransactionsWereNotCompleted,
+        [EnumMember(Value = "LimitationCheckFailed")] LimitationCheckFailed,
+        [EnumMember(Value = "TransactionAlreadyExists")] TransactionAlreadyExists,
+        [EnumMember(Value = "UnknownTrustedTransferDirection")] UnknownTrustedTransferDirection,
+        [EnumMember(Value = "InvalidGuidValue")] InvalidGuidValue,
+        [EnumMember(Value = "BadTempAccessToken")] BadTempAccessToken,
+        [EnumMember(Value = "NotEnoughLiquidity")] NotEnoughLiquidity,
+        [EnumMember(Value = "InvalidCashoutAddress")] InvalidCashoutAddress,
+        [EnumMember(Value = "MinVolumeViolation")] MinVolumeViolation,
+        [EnumMember(Value = "PendingDisclaimer")] PendingDisclaimer,
+        [EnumMember(Value = "AmountIsLessThanLimit")] AmountIsLessThanLimit,
+        [EnumMember(Value = "AmountIsBiggerThanLimit")] AmountIsBiggerThanLimit,
+        [EnumMember(Value = "AmountIsBiggerThanLimitAndUpgrade")] AmountIsBiggerThanLimitAndUpgrade,
+        [EnumMember(Value = "DepositWalletDuplication")] DepositWalletDuplication,
+        [EnumMember(Value = "BadRequest")] BadRequest,
+        [EnumMember(Value = "NotEnoughGas")] NotEnoughGas,
+        [EnumMember(Value = "ClientAlreadyExist")] ClientAlreadyExist,
+    }
+}

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MyNoSqlServer.DataWriter" Version="1.2.6" />
+    <PackageReference Include="MyNoSqlServer.DataReader" Version="1.2.16" />
+
+    <PackageReference Include="Lykke.Common" Version="7.5.0" />
+  </ItemGroup>
+
+
+</Project>
