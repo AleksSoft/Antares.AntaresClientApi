@@ -13,6 +13,7 @@ using AntaresClientApi.GrpcServices.Authentication;
 using AntaresClientApi.Lifetime;
 using Autofac;
 using Common;
+using Grpc.AspNetCore.Server;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 using Newtonsoft.Json;
@@ -27,14 +28,6 @@ namespace AntaresClientApi
         public Startup(IConfiguration configuration)
             : base(configuration)
         {
-        }
-
-        protected override void ConfigureServicesExt(IServiceCollection services)
-        {
-            services.AddGrpc(options =>
-            {
-                options.Interceptors.Add<AuthenticationInterceptor>();
-            });
         }
 
         protected override void RegisterEndpoints(IEndpointRouteBuilder endpoints)
@@ -112,6 +105,12 @@ namespace AntaresClientApi
                 })
                 .As<IMyNoSqlServerDataWriter<TEntity>>()
                 .SingleInstance();
+        }
+
+        protected override void ConfigureGrpcServiceOptions(GrpcServiceOptions options)
+        {
+            base.ConfigureGrpcServiceOptions(options);
+            options.Interceptors.Add<AuthenticationInterceptor>();
         }
     }
 

@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swisschain.Sdk.Server" Version="6.3.1" />
+    <PackageReference Include="Swisschain.Sdk.Server" Version="6.6.0" />
   </ItemGroup>
 
   <ItemGroup>
