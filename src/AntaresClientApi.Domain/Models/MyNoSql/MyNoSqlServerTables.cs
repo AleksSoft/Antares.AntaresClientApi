@@ -4,5 +4,6 @@
     {
         public const string SessionsTableName = "antaresapisessions";
         public const string RegistrationTokenTableName = "registrationtoken";
+        public const string ClientWalletTableName = "clientwallet";
     }
 }

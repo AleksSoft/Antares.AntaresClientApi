@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AntaresClientApi.Domain.Models;
 using AntaresClientApi.Domain.Tools;
 using Common;
 using Grpc.Core;
@@ -205,14 +206,18 @@ namespace AntaresClientApi.GrpcServices
 
             if (!token.RegistrationDone)
             {
-                var identity = await _personalData.RegisterClientAsync(
+                var registrationResult = await _accountManager.RegisterAccountAsync(
                     request.Email,
                     request.Phone,
                     request.FullName,
                     request.CountryIso3Code,
-                    request.AffiliateCode);
+                    request.AffiliateCode,
+                    request.Password,
+                    request.Hint,
+                    request.Pin);
 
-                if (identity == null)
+
+                if (registrationResult == null)
                 {
                     return new RegisterResponse()
                     {
@@ -224,15 +229,7 @@ namespace AntaresClientApi.GrpcServices
                     };
                 }
 
-                var registrationCreds = await _authService.RegisterClientAsync(
-                    identity.TenantId,
-                    identity.ClientId,
-                    request.Email,
-                    request.Password,
-                    request.Hint,
-                    request.Pin);
-
-                if (registrationCreds.IsEmailAlreadyExist || registrationCreds.IsClientAlreadyExist)
+                if (registrationResult.IsEmailAlreadyExist || registrationResult.IsClientAlreadyExist)
                 {
                     return new RegisterResponse()
                     {
@@ -245,8 +242,8 @@ namespace AntaresClientApi.GrpcServices
                 }
 
                 token.LastCodeHash = string.Empty;
-                token.ClientId = registrationCreds.ClientIdentity.ClientId;
-                token.TenantId = registrationCreds.ClientIdentity.TenantId;
+                token.ClientId = registrationResult.ClientIdentity.ClientId;
+                token.TenantId = registrationResult.ClientIdentity.TenantId;
                 token.RegistrationDone = true;
                 await _registrationTokenService.SaveAsync(token);
             }

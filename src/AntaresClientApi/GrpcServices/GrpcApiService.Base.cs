@@ -13,6 +13,8 @@ namespace AntaresClientApi.GrpcServices
         private readonly IRegistrationTokenService _registrationTokenService;
         private readonly IEmailVerification _emailVerification;
         private readonly IPersonalData _personalData;
+        private readonly IClientWalletService _clientWalletService;
+        private readonly IClientAccountManager _accountManager;
 
         public GrpcApiService(
             ISessionService sessionService, 
@@ -21,7 +23,9 @@ namespace AntaresClientApi.GrpcServices
             IAuthService authService,
             IRegistrationTokenService registrationTokenService,
             IEmailVerification emailVerification,
-            IPersonalData personalData)
+            IPersonalData personalData,
+            IClientWalletService clientWalletService,
+            IClientAccountManager accountManager)
         {
             _sessionService = sessionService;
             _smsVerification = smsVerification;
@@ -30,6 +34,8 @@ namespace AntaresClientApi.GrpcServices
             _registrationTokenService = registrationTokenService;
             _emailVerification = emailVerification;
             _personalData = personalData;
+            _clientWalletService = clientWalletService;
+            _accountManager = accountManager;
         }
     }
 }

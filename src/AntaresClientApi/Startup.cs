@@ -77,6 +77,14 @@ namespace AntaresClientApi
             builder.RegisterType<PersonalDataMock>()
                 .As<IPersonalData>()
                 .SingleInstance();
+
+            builder.RegisterType<ClientAccountManager>()
+                .As<IClientAccountManager>()
+                .SingleInstance();
+
+            builder.RegisterType<ClientWalletService>()
+                .As<IClientWalletService>()
+                .SingleInstance();
         }
 
         private void MyNoSql(ContainerBuilder builder)
@@ -92,15 +100,15 @@ namespace AntaresClientApi
 
             RegisterNoSqlReaderAndWriter<SessionEntity>(builder, MyNoSqlServerTables.SessionsTableName);
             RegisterNoSqlReaderAndWriter<RegistrationTokenEntity>(builder, MyNoSqlServerTables.RegistrationTokenTableName);
+            
+            RegisterNoSqlReader<ClientWalletEntity>(builder, MyNoSqlServerTables.ClientWalletTableName);
+
         }
 
 
         private void RegisterNoSqlReaderAndWriter<TEntity>(ContainerBuilder builder, string table) where TEntity : IMyNoSqlDbEntity, new()
         {
-            builder
-                .Register(ctx => new MyNoSqlReadRepository<TEntity>(_noSqlClient, table))
-                .As<IMyNoSqlServerDataReader<TEntity>>()
-                .SingleInstance();
+            RegisterNoSqlReader<TEntity>(builder, table);
 
             builder.Register(ctx =>
                 {
@@ -108,6 +116,14 @@ namespace AntaresClientApi
                         table);
                 })
                 .As<IMyNoSqlServerDataWriter<TEntity>>()
+                .SingleInstance();
+        }
+
+        private void RegisterNoSqlReader<TEntity>(ContainerBuilder builder, string table) where TEntity : IMyNoSqlDbEntity, new()
+        {
+            builder
+                .Register(ctx => new MyNoSqlReadRepository<TEntity>(_noSqlClient, table))
+                .As<IMyNoSqlServerDataReader<TEntity>>()
                 .SingleInstance();
         }
 

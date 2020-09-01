@@ -19,6 +19,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+
+    <PackageReference Include="MyNoSqlServer.DataWriter" Version="1.2.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +28,12 @@
     <ProjectReference Include="..\..\src\AntaresClientApi.ApiContract\AntaresClientApi.ApiContract.csproj" />
     <ProjectReference Include="..\..\src\AntaresClientApi.MessagingContract\AntaresClientApi.MessagingContract.csproj" />
     <ProjectReference Include="..\..\src\AntaresClientApi\AntaresClientApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
