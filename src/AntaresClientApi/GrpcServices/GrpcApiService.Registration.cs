@@ -207,6 +207,7 @@ namespace AntaresClientApi.GrpcServices
             if (!token.RegistrationDone)
             {
                 var registrationResult = await _accountManager.RegisterAccountAsync(
+                    "demo",
                     request.Email,
                     request.Phone,
                     request.FullName,
@@ -262,7 +263,7 @@ namespace AntaresClientApi.GrpcServices
                     NotificationsId = string.Empty, //todo: set notification id
                     SwiftDepositEnabled = false,
                     State = "OK",
-                    PersonalData = new PersonalData()
+                    PersonalData = new Swisschain.Lykke.AntaresWalletApi.ApiContract.PersonalData()
                     {
                         Phone = request.Phone,
                         Email = request.Email

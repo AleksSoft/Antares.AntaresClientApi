@@ -5,13 +5,13 @@ namespace AntaresClientApi.Domain.Services
 {
     public interface IAuthService
     {
-        Task<ClientIdentity> Login(string username, string password);
+        Task<ClientIdentity> Login(string tenantId, string username, string password);
 
-        Task<bool> CheckPin(string tenantId, string clientId, string pinHash);
+        Task<bool> CheckPin(string tenantId, long clientId, string pinHash);
 
         Task<RegistrationResult> RegisterClientAsync(
             string tenantId,
-            string clientId,
+            long clientId,
             string requestEmail,
             string requestPassword,
             string requestHint,

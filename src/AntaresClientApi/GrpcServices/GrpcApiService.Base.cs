@@ -1,5 +1,8 @@
 ﻿using AntaresClientApi.Domain.Services;
+using Assets.Client;
+using Assets.Domain.MyNoSql;
 using Microsoft.Extensions.Logging;
+using MyNoSqlServer.Abstractions;
 using Swisschain.Lykke.AntaresWalletApi.ApiContract;
 
 namespace AntaresClientApi.GrpcServices
@@ -15,6 +18,8 @@ namespace AntaresClientApi.GrpcServices
         private readonly IPersonalData _personalData;
         private readonly IClientWalletService _clientWalletService;
         private readonly IClientAccountManager _accountManager;
+        private readonly IMarketDataService _marketDataService;
+
 
         public GrpcApiService(
             ISessionService sessionService, 
@@ -25,7 +30,8 @@ namespace AntaresClientApi.GrpcServices
             IEmailVerification emailVerification,
             IPersonalData personalData,
             IClientWalletService clientWalletService,
-            IClientAccountManager accountManager)
+            IClientAccountManager accountManager,
+            IMarketDataService marketDataService)
         {
             _sessionService = sessionService;
             _smsVerification = smsVerification;
@@ -36,6 +42,9 @@ namespace AntaresClientApi.GrpcServices
             _personalData = personalData;
             _clientWalletService = clientWalletService;
             _accountManager = accountManager;
+            _marketDataService = marketDataService;
         }
+
+        public const string DefaultTenantId = "demo";
     }
 }

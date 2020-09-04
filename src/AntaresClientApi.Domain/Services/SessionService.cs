@@ -41,7 +41,7 @@ namespace AntaresClientApi.Domain.Services
             return _sessionsReader.Get(SessionEntity.GetPk(), sessionId.ToSha256().ToBase64());
         }
 
-        public async Task<(SessionEntity, string)> CreateVerifiedSessionAsync(string tenantId, string clientId, string publicKey = null)
+        public async Task<(SessionEntity, string)> CreateVerifiedSessionAsync(string tenantId, long clientId, string publicKey = null)
         {
             var (session, token) = SessionEntity.Generate(_sessionConfig.ExpirationTimeInMins);
             session.Verified = true;
@@ -56,7 +56,7 @@ namespace AntaresClientApi.Domain.Services
             return (session, token);
         }
 
-        public async Task<(SessionEntity, string)> CreateSessionAsync(string tenantId, string clientId, string publicKey = null)
+        public async Task<(SessionEntity, string)> CreateSessionAsync(string tenantId, long clientId, string publicKey = null)
         {
             var (session, token) = SessionEntity.Generate(_sessionConfig.ExpirationTimeInMins);
             session.PublicKey = publicKey;

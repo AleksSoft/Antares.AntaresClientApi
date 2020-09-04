@@ -9,6 +9,8 @@
     <PackageReference Include="MyNoSqlServer.DataReader" Version="1.2.16" />
 
     <PackageReference Include="Lykke.Common" Version="7.5.0" />
+
+    <PackageReference Include="Swisschain.Service.Assets.Client" Version="1.1.5" />
   </ItemGroup>
 
 

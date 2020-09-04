@@ -20,6 +20,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+
+    <PackageReference Include="Swisschain.Service.Assets.Client" Version="1.1.5" />
   </ItemGroup>
 
   <ItemGroup>

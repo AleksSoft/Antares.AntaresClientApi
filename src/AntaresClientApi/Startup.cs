@@ -5,15 +5,19 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AntaresClientApi.Common.Configuration;
+using AntaresClientApi.Database;
 using AntaresClientApi.Domain.Models.MyNoSql;
 using AntaresClientApi.Domain.Services;
 using AntaresClientApi.Domain.Services.Mock;
 using AntaresClientApi.GrpcServices;
 using AntaresClientApi.GrpcServices.Authentication;
 using AntaresClientApi.Lifetime;
+using Assets.Client;
+using Assets.Domain.MyNoSql;
 using Autofac;
 using Common;
 using Grpc.AspNetCore.Server;
+using Microsoft.Extensions.Options;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 using Newtonsoft.Json;
@@ -55,7 +59,7 @@ namespace AntaresClientApi
             MyNoSql(builder);
         }
 
-        private static void RegisterServices(ContainerBuilder builder)
+        private void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<SessionService>()
                 .As<ISessionService>()
@@ -85,6 +89,17 @@ namespace AntaresClientApi
             builder.RegisterType<ClientWalletService>()
                 .As<IClientWalletService>()
                 .SingleInstance();
+
+            builder.RegisterType<MarketDataService>()
+                .As<IMarketDataService>()
+                .SingleInstance();
+
+            builder.RegisterInstance(new AssetsClient(Config.AssetsClientSettings))
+                .As<IAssetsClient>()
+                .SingleInstance();
+
+            builder.RegisterModule(new PostgresModule(Config.Db.MeWriterConnectionString));
+
         }
 
         private void MyNoSql(ContainerBuilder builder)
@@ -102,7 +117,19 @@ namespace AntaresClientApi
             RegisterNoSqlReaderAndWriter<RegistrationTokenEntity>(builder, MyNoSqlServerTables.RegistrationTokenTableName);
             
             RegisterNoSqlReader<ClientWalletEntity>(builder, MyNoSqlServerTables.ClientWalletTableName);
+            RegisterNoSqlReaderAndWriter<ClientWalletIndexByIdEntity>(builder, MyNoSqlServerTables.ClientWalletIndexedByIdTableName);
 
+            RegisterNoSqlReader<AssetsEntity>(builder, SetupMyNoSqlAssetService.AssetsTableName);
+            RegisterNoSqlReader<AssetPairsEntity>(builder, SetupMyNoSqlAssetService.AssetPairsTableName);
+
+            #region Mock
+            RegisterNoSqlReaderAndWriter<PersonalDataEntity>(builder, MyNoSqlServerTables.PersonalDataTableName);
+            RegisterNoSqlReaderAndWriter<AuthDataEntity>(builder, MyNoSqlServerTables.AuthDataTableName);
+            RegisterNoSqlReaderAndWriter<AuthDataIndexByIdEntity>(builder, MyNoSqlServerTables.AuthDataIndexByIdTableName);
+            
+            
+
+            #endregion
         }
 
 

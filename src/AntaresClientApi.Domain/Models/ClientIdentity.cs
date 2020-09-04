@@ -2,7 +2,7 @@
 {
     public class ClientIdentity
     {
-        public string ClientId { get; set; }
+        public long ClientId { get; set; }
 
         public string TenantId { get; set; }
     }

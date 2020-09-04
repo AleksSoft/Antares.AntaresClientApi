@@ -1,5 +1,8 @@
 ﻿using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models;
+using AntaresClientApi.Domain.Models.MyNoSql;
+using AntaresClientApi.Domain.Services.Extention;
+using MyNoSqlServer.Abstractions;
 
 namespace AntaresClientApi.Domain.Services
 {
@@ -11,14 +14,25 @@ namespace AntaresClientApi.Domain.Services
 
         private readonly IClientWalletService _clientWalletService;
 
-        public ClientAccountManager(IPersonalData personalData, IAuthService authService, IClientWalletService clientWalletService)
+        private readonly IMyNoSqlServerDataWriter<ClientProfileEntity> _clientProfileDataWriter;
+        private readonly IMyNoSqlServerDataReader<ClientProfileEntity> _clientProfileDataReader;
+        private readonly IMarketDataService _marketDataService;
+
+        public ClientAccountManager(IPersonalData personalData, IAuthService authService, IClientWalletService clientWalletService,
+            IMyNoSqlServerDataWriter<ClientProfileEntity> clientProfileDataWriter, IMarketDataService marketDataService,
+            IMyNoSqlServerDataReader<ClientProfileEntity> clientProfileDataReader)
         {
             _personalData = personalData;
             _authService = authService;
             _clientWalletService = clientWalletService;
+            _clientProfileDataWriter = clientProfileDataWriter;
+            _marketDataService = marketDataService;
+            _clientProfileDataReader = clientProfileDataReader;
         }
 
-        public async Task<RegistrationResult> RegisterAccountAsync(string email,
+        public async Task<RegistrationResult> RegisterAccountAsync(
+            string tenantId,
+            string email,
             string phone,
             string fullName,
             string countryIso3Code,
@@ -28,6 +42,7 @@ namespace AntaresClientApi.Domain.Services
             string pin)
         {
             var identity = await _personalData.RegisterClientAsync(
+                tenantId,
                 email,
                 phone,
                 fullName,
@@ -41,6 +56,8 @@ namespace AntaresClientApi.Domain.Services
 
             await _clientWalletService.RegisterDefaultWallets(identity);
 
+            await CreateClientProfile(tenantId, identity.ClientId);
+
             var result = await _authService.RegisterClientAsync(
                 identity.TenantId,
                 identity.ClientId,
@@ -50,6 +67,47 @@ namespace AntaresClientApi.Domain.Services
                 pin);
 
             return result;
+        }
+
+        public ClientProfileEntity GetClientProfile(string tenantId, long clientId)
+        {
+            var profile = _clientProfileDataReader.Get(ClientProfileEntity.GeneratePartitionKey(tenantId),
+                ClientProfileEntity.GenerateRowKey(clientId));
+
+            return profile;
+        }
+
+        public async Task SetBaseAssetToClientProfile(string tenantId, long clientId, string baseAssetId)
+        {
+            var profile = await _clientProfileDataWriter.TryGetAsync(ClientProfileEntity.GeneratePartitionKey(tenantId),
+                ClientProfileEntity.GenerateRowKey(clientId));
+
+            if (profile == null)
+            {
+                profile = await CreateClientProfile(tenantId, clientId);
+            }
+
+            profile.BaseAssetId = baseAssetId;
+
+            await _clientProfileDataWriter.InsertOrReplaceAsync(profile);
+        }
+
+        private async Task<ClientProfileEntity> CreateClientProfile(string tenantId, long clientId)
+        {
+            var baseAsset = await _marketDataService.GetDefaultBaseAsset(tenantId);
+
+            var profile = new ClientProfileEntity()
+            {
+                PartitionKey = ClientProfileEntity.GeneratePartitionKey(tenantId),
+                RowKey = ClientProfileEntity.GenerateRowKey(clientId),
+                TenantId = tenantId,
+                ClientId = clientId,
+                BaseAssetId = baseAsset.Id.ToString()
+            };
+
+            await _clientProfileDataWriter.InsertOrReplaceAsync(profile);
+
+            return profile;
         }
     }
 }

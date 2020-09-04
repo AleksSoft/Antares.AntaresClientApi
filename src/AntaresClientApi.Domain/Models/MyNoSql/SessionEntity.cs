@@ -13,7 +13,7 @@ namespace AntaresClientApi.Domain.Models.MyNoSql
         public const int PinVerificationLimitDefault = 5;
 
         public string Id { get; set; }
-        public string ClientId { get; set; }
+        public long ClientId { get; set; }
         public string TenantId { get; set; }
         public bool Verified { get; set; }
         public bool Sms { get; set; }

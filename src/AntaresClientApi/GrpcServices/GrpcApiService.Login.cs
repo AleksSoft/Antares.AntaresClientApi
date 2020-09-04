@@ -21,9 +21,9 @@ namespace AntaresClientApi.GrpcServices
 
             var result = new LoginResponse();
 
-            var identity = await _authService.Login(request.Email, request.Password);
+            var authData = await _authService.Login(DefaultTenantId, request.Email, request.Password);
 
-            if (identity == null)
+            if (authData == null)
             {
                 result.Error = new ErrorV1
                 {
@@ -34,7 +34,7 @@ namespace AntaresClientApi.GrpcServices
                 return result;
             }
 
-            var (_, token) = await _sessionService.CreateSessionAsync(identity.TenantId, identity.ClientId, request.PublicKey);
+            var (_, token) = await _sessionService.CreateSessionAsync(authData.TenantId, authData.ClientId, request.PublicKey);
 
 
             result.Result = new LoginResponse.Types.LoginPayload
@@ -66,7 +66,7 @@ namespace AntaresClientApi.GrpcServices
                 return result;
             }
 
-            var codeHash = await _smsVerification.SendVerificationSms(session.Id, session.ClientId);
+            var codeHash = await _smsVerification.SendVerificationSms(session.ClientId, session.TenantId);
             session.LastCodeHash = codeHash;
             await _sessionService.SaveSessionAsync(session);
 
@@ -176,7 +176,7 @@ namespace AntaresClientApi.GrpcServices
                 };
             }
 
-            var verificationResult = await _authService.CheckPin(session.TenantId, session.ClientId, request.Pin.ToSha256());
+            var verificationResult = await _authService.CheckPin(session.TenantId, session.ClientId, request.Pin.ToSha256().ToBase64());
 
             var result = new CheckPinResponse();
 

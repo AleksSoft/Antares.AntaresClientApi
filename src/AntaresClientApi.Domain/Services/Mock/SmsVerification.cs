@@ -6,7 +6,7 @@ namespace AntaresClientApi.Domain.Services.Mock
 {
     public class SmsVerificationMock: ISmsVerification
     {
-        public Task<string> SendVerificationSms(string clientId, string tenantId)
+        public Task<string> SendVerificationSms(long clientId, string tenantId)
         {
             return Task.FromResult("0000".ToSha256().ToBase64());
         }
@@ -19,7 +19,7 @@ namespace AntaresClientApi.Domain.Services.Mock
 
     public class EmailVerificationMock: IEmailVerification
     {
-        public Task<string> SendVerificationEmail(string clientId, string tenantId)
+        public Task<string> SendVerificationEmail(long clientId, string tenantId)
         {
             return Task.FromResult("0000".ToSha256().ToBase64());
         }

@@ -1,61 +1,109 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models;
+using AntaresClientApi.Domain.Models.MyNoSql;
+using AntaresClientApi.Domain.Services.Extention;
 using AntaresClientApi.Domain.Tools;
+using Common;
+using MyNoSqlServer.Abstractions;
 
 namespace AntaresClientApi.Domain.Services.Mock
 {
     public class AuthServiceMock: IAuthService
     {
-        public Dictionary<string, string> Users { get; set; } = new Dictionary<string, string> { {"test@swisschain.com", "123456"} };
+        private readonly IMyNoSqlServerDataWriter<AuthDataEntity> _dataWriter;
+        private readonly IMyNoSqlServerDataWriter<AuthDataIndexByIdEntity> _indexDataWriter;
 
-        public async Task<ClientIdentity> Login(string username, string password)
+        public AuthServiceMock(IMyNoSqlServerDataWriter<AuthDataEntity> dataWriter, 
+            IMyNoSqlServerDataWriter<AuthDataIndexByIdEntity> indexDataWriter)
         {
-            if (!Users.TryGetValue(username, out var passw) || password != passw)
+            _dataWriter = dataWriter;
+            _indexDataWriter = indexDataWriter;
+        }
+
+        public async Task<ClientIdentity> Login(string tenantId, string username, string password)
+        {
+            var data = await _dataWriter.TryGetAsync(AuthDataEntity.GeneratePartitionKey(), AuthDataEntity.GenerateRowKey(tenantId, username));
+
+            if (data.PasswordHash == password.ToSha256().ToBase64())
             {
-                return null;
+                var indexEntity = AuthDataIndexByIdEntity.Generate(data.TenantId, data.ClientId, data.Email);
+                await _indexDataWriter.InsertOrReplaceAsync(indexEntity);
+
+                return new ClientIdentity()
+                {
+                    ClientId = data.ClientId,
+                    TenantId = data.TenantId
+                };
             }
 
-            return new ClientIdentity()
-            {
-                ClientId = $"user-test-{username}",
-                TenantId = "demo"
-            };
+            return null;
         }
 
-        public async Task<bool> CheckPin(string tenantId, string clientId, string pinHash)
+        public async Task<bool> CheckPin(string tenantId, long clientId, string pinHash)
         {
-            return pinHash == "1111".ToSha256();
+            var indexEntity = await _indexDataWriter.TryGetAsync(AuthDataIndexByIdEntity.GeneratePartitionKey(tenantId), AuthDataIndexByIdEntity.GenerateRowKey(clientId));
+            if (indexEntity == null)
+                return false;
+
+            var entity = await _dataWriter.TryGetAsync(AuthDataEntity.GeneratePartitionKey(), AuthDataEntity.GenerateRowKey(indexEntity.TenantId, indexEntity.Email));
+            if (entity == null || entity.PinHash != pinHash)
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public async Task<RegistrationResult> RegisterClientAsync(string tenantId,
-            string clientId,
+        public async Task<RegistrationResult> RegisterClientAsync(
+            string tenantId,
+            long clientId,
             string requestEmail,
             string requestPassword,
             string requestHint,
             string requestPin)
         {
-            if (Users.ContainsKey(requestEmail))
+            var entity = AuthDataEntity.Generate(tenantId, requestEmail);
+            entity.ClientId = clientId;
+            entity.Hint = requestHint;
+            entity.Email = requestEmail;
+            entity.PasswordHash = requestPassword.ToSha256().ToBase64();
+            entity.PinHash = requestPin.ToSha256().ToBase64();
+            entity.TenantId = tenantId;
+
+            var insertSuccess = await _dataWriter.TryInsertAsync(entity);
+            if (!insertSuccess)
             {
-                return new RegistrationResult()
+                var exist = await TryGetAuthData(entity.TenantId, entity.Email);
+                if (exist != null)
                 {
-                    IsEmailAlreadyExist = true,
-                    IsSuccess = false
-                };
+                    return new RegistrationResult()
+                    {
+                        IsEmailAlreadyExist = true,
+                        IsSuccess = false
+                    };
+                }
             }
 
-            Users.Add(requestEmail, requestPassword);
+            var indexEntity = AuthDataIndexByIdEntity.Generate(tenantId, clientId, requestEmail);
+            await _indexDataWriter.InsertOrReplaceAsync(indexEntity);
 
             return new RegistrationResult()
             {
                 IsEmailAlreadyExist = false,
                 ClientIdentity = new ClientIdentity()
                 {
-                    ClientId = $"user-test-{requestEmail}",
-                    TenantId = "demo"
+                    ClientId = entity.ClientId,
+                    TenantId = entity.TenantId
                 },
                 IsSuccess = true
             };
+        }
+
+        private async Task<AuthDataEntity> TryGetAuthData(string tenantId, string email)
+        {
+            return await _dataWriter.TryGetAsync(AuthDataEntity.GeneratePartitionKey(), AuthDataEntity.GenerateRowKey(tenantId, email));
         }
     }
 }

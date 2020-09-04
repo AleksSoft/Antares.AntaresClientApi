@@ -22,7 +22,7 @@ namespace AntaresClientApi.Domain.Models.MyNoSql
 
 
         public bool RegistrationDone { get; set; }
-        public string ClientId { get; set; }
+        public long ClientId { get; set; }
         public string TenantId { get; set; }
 
 

@@ -28,10 +28,13 @@
 
   <ItemGroup>
     <PackageReference Include="Swisschain.Sdk.Server" Version="6.6.0" />
+    <PackageReference Include="Swisschain.Service.Assets.Client" Version="1.1.5" />
+    
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AntaresClientApi.ApiContract\AntaresClientApi.ApiContract.csproj" />
+    <ProjectReference Include="..\AntaresClientApi.Database\AntaresClientApi.Database.csproj" />
     <ProjectReference Include="..\AntaresClientApi.Domain\AntaresClientApi.Domain.csproj" />
   </ItemGroup>
 
