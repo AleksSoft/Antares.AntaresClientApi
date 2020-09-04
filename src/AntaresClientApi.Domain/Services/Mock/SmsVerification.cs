@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using AntaresClientApi.Domain.Tools;
+using AntaresClientApi.Domain.Models.Extensions;
 using Common;
 
 namespace AntaresClientApi.Domain.Services.Mock

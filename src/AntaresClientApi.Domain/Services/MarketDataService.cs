@@ -52,7 +52,7 @@ namespace AntaresClientApi.Domain.Services
             if (usd != null)
                 return usd;
 
-            return assets.FirstOrDefault(a => a.IsDisabled);
+            return assets.FirstOrDefault(a => !a.IsDisabled);
         }
     }
 }

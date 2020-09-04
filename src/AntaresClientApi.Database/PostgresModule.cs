@@ -14,8 +14,9 @@ namespace AntaresClientApi.Database
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<ConnectionFactory>()
+            builder.RegisterType<DbConnectionFactory>()
                 .AsSelf()
+                .As<IDbConnectionFactory>()
                 .WithParameter(TypedParameter.From(_meWriterConnectionString))
                 .SingleInstance();
         }

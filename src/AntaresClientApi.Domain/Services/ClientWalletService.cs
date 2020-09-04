@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AntaresClientApi.Database.Context;
 using AntaresClientApi.Domain.Models;
 using AntaresClientApi.Domain.Models.MyNoSql;
+using AntaresClientApi.Domain.Models.Wallet;
 using AntaresClientApi.Domain.Services.Extention;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyNoSqlServer.Abstractions;
 
@@ -16,29 +20,32 @@ namespace AntaresClientApi.Domain.Services
 
         private readonly IMyNoSqlServerDataReader<ClientWalletIndexByIdEntity> _walletsByIdReader;
         private readonly IMyNoSqlServerDataWriter<ClientWalletIndexByIdEntity> _walletsByIdWriter;
+        private readonly IDbConnectionFactory _dbConnectionFactory;
 
-        
+
         private readonly ILogger<ClientWalletService> _logger;
 
         public ClientWalletService(IMyNoSqlServerDataReader<ClientWalletEntity> walletsReader,
             ILogger<ClientWalletService> logger,
             IMyNoSqlServerDataWriter<ClientWalletEntity> walletsWriter,
             IMyNoSqlServerDataReader<ClientWalletIndexByIdEntity> walletsByIdReader,
-            IMyNoSqlServerDataWriter<ClientWalletIndexByIdEntity> walletsByIdWriter)
+            IMyNoSqlServerDataWriter<ClientWalletIndexByIdEntity> walletsByIdWriter,
+            IDbConnectionFactory dbConnectionFactory)
         {
             _walletsReader = walletsReader;
             _logger = logger;
             _walletsWriter = walletsWriter;
             _walletsByIdReader = walletsByIdReader;
             _walletsByIdWriter = walletsByIdWriter;
+            _dbConnectionFactory = dbConnectionFactory;
         }
 
-        public async Task RegisterDefaultWallets(ClientIdentity client)
+        public async Task<ClientWalletEntity> RegisterOrGetDefaultWallets(ClientIdentity client)
         {
             var existWallet = await _walletsWriter.TryGetAsync(ClientWalletEntity.GetPartitionKey(client.TenantId), ClientWalletEntity.GetRowKey(client.ClientId));
             if (existWallet != null)
             {
-                return;
+                return existWallet;
             }
 
             bool result;
@@ -57,17 +64,42 @@ namespace AntaresClientApi.Domain.Services
                 if (result)
                 {
                     await _walletsWriter.InsertOrReplaceAsync(entity);
+                    
+                    return entity;
                 }
 
+                _logger.LogInformation("Cannot insert new wallet with id={WalletId}. ClientId={clientId}, TenantId={TenamtId}", entity.WalletId, entity.Client.TenantId, entity.Client.ClientId);
 
-                result = await _walletsWriter.TryInsertAsync(entity);
-
-            } while (!result);
+            } while (true);
         }
 
-        public async Task<IReadOnlyList<AssetBalance>> GetClientBalances(string tenantId, long clientId)
+        public async Task<IReadOnlyList<IAssetBalance>> GetClientBalances(string tenantId, long clientId)
         {
-            return null;
+            var wallet = await RegisterOrGetDefaultWallets(new ClientIdentity()
+            {
+                TenantId = tenantId,
+                ClientId = clientId
+            });
+
+            using (var ctx = _dbConnectionFactory.CreateMeWriterDataContext())
+            {
+                try
+                {
+                    var balance = await ctx.Balances
+                        .Where(w =>
+                            w.BrokerId == wallet.Client.TenantId &&
+                            w.AccountId == wallet.Client.ClientId &&
+                            w.WalletId == wallet.WalletId)
+                        .ToListAsync();
+
+                    return balance;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    throw;
+                }
+            }
         }
 
         private long GenerateWalletId()

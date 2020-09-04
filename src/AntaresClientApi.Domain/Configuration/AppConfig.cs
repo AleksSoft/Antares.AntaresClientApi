@@ -9,8 +9,6 @@ namespace AntaresClientApi.Common.Configuration
         public MyNoSqlConfig MyNoSqlServer { get; set; }
 
         public SessionConfig SessionConfig { get; set; }
-
-        public AssetsClientSettings AssetsClientSettings { get; set; }
     }
 
     public class MyNoSqlConfig

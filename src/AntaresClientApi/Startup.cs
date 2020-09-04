@@ -94,10 +94,6 @@ namespace AntaresClientApi
                 .As<IMarketDataService>()
                 .SingleInstance();
 
-            builder.RegisterInstance(new AssetsClient(Config.AssetsClientSettings))
-                .As<IAssetsClient>()
-                .SingleInstance();
-
             builder.RegisterModule(new PostgresModule(Config.Db.MeWriterConnectionString));
 
         }
@@ -115,21 +111,23 @@ namespace AntaresClientApi
 
             RegisterNoSqlReaderAndWriter<SessionEntity>(builder, MyNoSqlServerTables.SessionsTableName);
             RegisterNoSqlReaderAndWriter<RegistrationTokenEntity>(builder, MyNoSqlServerTables.RegistrationTokenTableName);
-            
-            RegisterNoSqlReader<ClientWalletEntity>(builder, MyNoSqlServerTables.ClientWalletTableName);
+
+            RegisterNoSqlReaderAndWriter<ClientWalletEntity>(builder, MyNoSqlServerTables.ClientWalletTableName);
             RegisterNoSqlReaderAndWriter<ClientWalletIndexByIdEntity>(builder, MyNoSqlServerTables.ClientWalletIndexedByIdTableName);
 
-            RegisterNoSqlReader<AssetsEntity>(builder, SetupMyNoSqlAssetService.AssetsTableName);
-            RegisterNoSqlReader<AssetPairsEntity>(builder, SetupMyNoSqlAssetService.AssetPairsTableName);
+            RegisterNoSqlReaderAndWriter<ClientProfileEntity>(builder, MyNoSqlServerTables.ClientProfileTableName);
 
             #region Mock
             RegisterNoSqlReaderAndWriter<PersonalDataEntity>(builder, MyNoSqlServerTables.PersonalDataTableName);
             RegisterNoSqlReaderAndWriter<AuthDataEntity>(builder, MyNoSqlServerTables.AuthDataTableName);
             RegisterNoSqlReaderAndWriter<AuthDataIndexByIdEntity>(builder, MyNoSqlServerTables.AuthDataIndexByIdTableName);
-            
-            
+
+
 
             #endregion
+
+            RegisterNoSqlReader<AssetsEntity>(builder, SetupMyNoSqlAssetService.AssetsTableName);
+            RegisterNoSqlReader<AssetPairsEntity>(builder, SetupMyNoSqlAssetService.AssetPairsTableName);
         }
 
 

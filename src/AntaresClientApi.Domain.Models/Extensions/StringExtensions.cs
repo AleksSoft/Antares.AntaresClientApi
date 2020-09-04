@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace AntaresClientApi.Domain.Tools
+namespace AntaresClientApi.Domain.Models.Extensions
 {
     public static class StringExtensions
     {

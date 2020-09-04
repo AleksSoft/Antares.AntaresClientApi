@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Security.Principal;
-using AntaresClientApi.Domain.Tools;
+using AntaresClientApi.Domain.Models.Extensions;
 using Common;
 using MyNoSqlServer.Abstractions;
-using Lykke.Common.Extensions;
 
 namespace AntaresClientApi.Domain.Models.MyNoSql
 {

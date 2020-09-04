@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models;
+using AntaresClientApi.Domain.Models.Extensions;
 using AntaresClientApi.Domain.Models.MyNoSql;
 using AntaresClientApi.Domain.Services.Extention;
-using AntaresClientApi.Domain.Tools;
 using Common;
 using MyNoSqlServer.Abstractions;
 

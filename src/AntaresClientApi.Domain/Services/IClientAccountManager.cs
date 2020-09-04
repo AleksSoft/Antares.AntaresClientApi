@@ -17,7 +17,7 @@ namespace AntaresClientApi.Domain.Services
             string hint,
             string pin);
 
-        ClientProfileEntity GetClientProfile(string tenantId, long clientId);
+        Task<ClientProfileEntity> GetClientProfile(string tenantId, long clientId);
         Task SetBaseAssetToClientProfile(string tenantId, long clientId, string baseAssetId);
     }
 }

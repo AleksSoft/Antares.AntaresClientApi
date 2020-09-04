@@ -13,10 +13,5 @@
     <PackageReference Include="Swisschain.Service.Assets.Client" Version="1.1.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AntaresClientApi.Database\AntaresClientApi.Database.csproj" />
-    <ProjectReference Include="..\AntaresClientApi.Domain.Models\AntaresClientApi.Domain.Models.csproj" />
-  </ItemGroup>
-
 
 </Project>

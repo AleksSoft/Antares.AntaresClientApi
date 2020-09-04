@@ -1,5 +1,5 @@
 ﻿using System;
-using AntaresClientApi.Domain.Tools;
+using AntaresClientApi.Domain.Models.Extensions;
 using Common;
 using MyNoSqlServer.Abstractions;
 

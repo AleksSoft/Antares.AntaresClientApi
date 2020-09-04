@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Cryptography;
 using AntaresClientApi.Domain.Models.MyNoSql;
-using AntaresClientApi.Domain.Tools;
 using Common;
 using Grpc.Core;
 

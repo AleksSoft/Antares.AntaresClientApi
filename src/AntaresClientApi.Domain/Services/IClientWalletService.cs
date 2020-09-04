@@ -8,8 +8,8 @@ namespace AntaresClientApi.Domain.Services
 {
     public interface IClientWalletService
     {
-        Task RegisterDefaultWallets(ClientIdentity client);
+        Task<ClientWalletEntity> RegisterOrGetDefaultWallets(ClientIdentity client);
 
-        Task<IReadOnlyList<AssetBalance>> GetClientBalances(string tenantId, long clientId);
+        Task<IReadOnlyList<IAssetBalance>> GetClientBalances(string tenantId, long clientId);
     }
 }

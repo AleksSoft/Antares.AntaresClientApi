@@ -54,7 +54,7 @@ namespace AntaresClientApi.Domain.Services
                 return null;
             }
 
-            await _clientWalletService.RegisterDefaultWallets(identity);
+            await _clientWalletService.RegisterOrGetDefaultWallets(identity);
 
             await CreateClientProfile(tenantId, identity.ClientId);
 
@@ -69,23 +69,22 @@ namespace AntaresClientApi.Domain.Services
             return result;
         }
 
-        public ClientProfileEntity GetClientProfile(string tenantId, long clientId)
+        public async Task<ClientProfileEntity> GetClientProfile(string tenantId, long clientId)
         {
             var profile = _clientProfileDataReader.Get(ClientProfileEntity.GeneratePartitionKey(tenantId),
-                ClientProfileEntity.GenerateRowKey(clientId));
-
-            return profile;
-        }
-
-        public async Task SetBaseAssetToClientProfile(string tenantId, long clientId, string baseAssetId)
-        {
-            var profile = await _clientProfileDataWriter.TryGetAsync(ClientProfileEntity.GeneratePartitionKey(tenantId),
                 ClientProfileEntity.GenerateRowKey(clientId));
 
             if (profile == null)
             {
                 profile = await CreateClientProfile(tenantId, clientId);
             }
+
+            return profile;
+        }
+
+        public async Task SetBaseAssetToClientProfile(string tenantId, long clientId, string baseAssetId)
+        {
+            var profile = await GetClientProfile(tenantId, clientId);
 
             profile.BaseAssetId = baseAssetId;
 
@@ -94,6 +93,12 @@ namespace AntaresClientApi.Domain.Services
 
         private async Task<ClientProfileEntity> CreateClientProfile(string tenantId, long clientId)
         {
+            var exist = await _clientProfileDataWriter.TryGetAsync(ClientProfileEntity.GeneratePartitionKey(tenantId), ClientProfileEntity.GenerateRowKey(clientId));
+            if (exist != null)
+            {
+                return exist;
+            }
+
             var baseAsset = await _marketDataService.GetDefaultBaseAsset(tenantId);
 
             var profile = new ClientProfileEntity()
@@ -102,7 +107,7 @@ namespace AntaresClientApi.Domain.Services
                 RowKey = ClientProfileEntity.GenerateRowKey(clientId),
                 TenantId = tenantId,
                 ClientId = clientId,
-                BaseAssetId = baseAsset.Id.ToString()
+                BaseAssetId = baseAsset.Symbol
             };
 
             await _clientProfileDataWriter.InsertOrReplaceAsync(profile);

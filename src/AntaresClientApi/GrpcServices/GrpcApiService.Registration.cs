@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models;
-using AntaresClientApi.Domain.Tools;
+using AntaresClientApi.Domain.Models.Extensions;
 using Common;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -64,7 +64,7 @@ namespace AntaresClientApi.GrpcServices
             var token = await _registrationTokenService.GetByOriginalTokenAsync(request.Token);
 
             if (token == null || string.IsNullOrEmpty(request.Code)
-                              || token.ExpirationDate >= DateTime.UtcNow
+                              || token.ExpirationDate <= DateTime.UtcNow
                               || token.EmailHash != request.Email.ToSha256().ToBase64()
                               || token.LastCodeHash != request.Code.ToSha256().ToBase64())
             {
@@ -94,7 +94,7 @@ namespace AntaresClientApi.GrpcServices
         {
             var token = await _registrationTokenService.GetByOriginalTokenAsync(request.Token);
 
-            if (token == null || token.ExpirationDate >= DateTime.UtcNow
+            if (token == null || token.ExpirationDate <= DateTime.UtcNow
                               || !token.EmailVerified)
             {
                 context.Status = new Status(StatusCode.Unauthenticated, "Unauthorized");
@@ -147,7 +147,7 @@ namespace AntaresClientApi.GrpcServices
             var token = await _registrationTokenService.GetByOriginalTokenAsync(request.Token);
 
             if (token == null || string.IsNullOrEmpty(request.Code)
-                              || token.ExpirationDate >= DateTime.UtcNow
+                              || token.ExpirationDate <= DateTime.UtcNow
                               || !token.EmailVerified
                               || token.PhoneHash != request.Phone.ToSha256().ToBase64()
                               || token.LastCodeHash != request.Code.ToSha256().ToBase64())
@@ -175,7 +175,7 @@ namespace AntaresClientApi.GrpcServices
         {
             var token = await _registrationTokenService.GetByOriginalTokenAsync(request.Token);
 
-            if (token == null || token.ExpirationDate >= DateTime.UtcNow
+            if (token == null || token.ExpirationDate <= DateTime.UtcNow
                               || !token.EmailVerified
                               || !token.PhoneVerified
                               || token.EmailHash != request.Email.ToSha256().ToBase64()

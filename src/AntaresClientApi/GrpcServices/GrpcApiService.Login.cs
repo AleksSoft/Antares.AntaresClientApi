@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AntaresClientApi.Domain.Tools;
+using AntaresClientApi.Domain.Models.Extensions;
 using Common;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;

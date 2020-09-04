@@ -21,6 +21,7 @@ namespace AntaresClientApi.Lifetime
         private readonly IMyNoSqlServerDataReader<PersonalDataEntity> _personalDataReader;
         private readonly IMyNoSqlServerDataReader<AuthDataEntity> _authDataReader;
         private readonly IMyNoSqlServerDataReader<AuthDataIndexByIdEntity> _authIndexNyIdDataReader;
+        private IMyNoSqlServerDataReader<ClientProfileEntity> _clientProfileDataReader;
 
         public LifetimeManager(
             ILogger<LifetimeManager> logger,
@@ -32,7 +33,8 @@ namespace AntaresClientApi.Lifetime
             IMyNoSqlServerDataReader<AssetPairsEntity> assetPairsReader,
             IMyNoSqlServerDataReader<PersonalDataEntity> personalDataReader,
             IMyNoSqlServerDataReader<AuthDataEntity> authDataReader,
-            IMyNoSqlServerDataReader<AuthDataIndexByIdEntity> authIndexNyIdDataReader)
+            IMyNoSqlServerDataReader<AuthDataIndexByIdEntity> authIndexNyIdDataReader,
+            IMyNoSqlServerDataReader<ClientProfileEntity> clientProfileDataReader)
         {
             _logger = logger;
             _client = client;
@@ -44,6 +46,7 @@ namespace AntaresClientApi.Lifetime
             _personalDataReader = personalDataReader;
             _authDataReader = authDataReader;
             _authIndexNyIdDataReader = authIndexNyIdDataReader;
+            _clientProfileDataReader = clientProfileDataReader;
         }
 
         public void Start()
@@ -62,6 +65,7 @@ namespace AntaresClientApi.Lifetime
             _logger.LogInformation("personalDataReader - count: {Count}", _personalDataReader.Count());
             _logger.LogInformation("authDataReader - count: {Count}", _authDataReader.Count());
             _logger.LogInformation("authIndexNyIdDataReader - count: {Count}", _authIndexNyIdDataReader.Count());
+            _logger.LogInformation("clientProfileDataReader - count: {Count}", _clientProfileDataReader.Count());
 
 
             _logger.LogInformation("LifetimeManager started");

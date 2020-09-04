@@ -36,6 +36,7 @@
     <ProjectReference Include="..\AntaresClientApi.ApiContract\AntaresClientApi.ApiContract.csproj" />
     <ProjectReference Include="..\AntaresClientApi.Database\AntaresClientApi.Database.csproj" />
     <ProjectReference Include="..\AntaresClientApi.Domain\AntaresClientApi.Domain.csproj" />
+    <ProjectReference Include="..\AntaresClientApi.Domain.Models\AntaresClientApi.Domain.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,7 +10,8 @@
         public const string PersonalDataTableName = "personaldata-mock";
         public const string AuthDataTableName = "authdata-mock";
         public const string AuthDataIndexByIdTableName = "authdata-mock-index-by-id";
-        public const string AssetDataTableName = "asset-data";
+        
+        public const string ClientProfileTableName = "client-profile";
 
     }
 }

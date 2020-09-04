@@ -18,17 +18,17 @@ namespace AntaresClientApi.GrpcServices
         {
             var session = SessionFromContext(context);
 
-            var assets = await _marketDataService.GetAssetPairsByTenant(session.TenantId);
+            var assets = await _marketDataService.GetAssetsByTenant(session.TenantId);
                 
             
             var response = new AssetsDictionaryResponse();
 
             //todo: add all parameters in AssetService
-            foreach (var asset in assets.Where(a => a.IsDisabled))
+            foreach (var asset in assets.Where(a => !a.IsDisabled))
             {
                 response.Assets.Add(
                     new Asset(
-                        id: asset.Id.ToString(),
+                        id: asset.Symbol,
                         name: asset.Symbol,
                         symbol: asset.Symbol,
                         displayId:asset.Symbol,
@@ -71,7 +71,7 @@ namespace AntaresClientApi.GrpcServices
             {
                 response.AssetPairs.Add(new AssetPair()
                 {
-                    Id = pair.Id.ToString(),
+                    Id = pair.Symbol,
                     Accuracy = pair.Accuracy,
                     BaseAssetId = pair.BaseAssetId.ToString(),
                     Name = pair.Symbol,

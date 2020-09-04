@@ -1,12 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AntaresClientApi.Database.MeData;
+using Microsoft.EntityFrameworkCore;
 
 namespace AntaresClientApi.Database.Context
 {
-    public class ConnectionFactory
+    public class DbConnectionFactory : IDbConnectionFactory
     {
         private readonly string _meWriterConnectionString;
 
-        public ConnectionFactory(string meWriterConnectionString)
+        public DbConnectionFactory(string meWriterConnectionString)
         {
             _meWriterConnectionString = meWriterConnectionString;
         }
@@ -19,9 +20,14 @@ namespace AntaresClientApi.Database.Context
             //}
         }
 
-        internal MeWriterDataContext CreateMeWriterDataContext()
+        public MeWriterDataContext CreateMeWriterDataContext()
         {
             return new MeWriterDataContext(_meWriterConnectionString);
         }
+    }
+
+    public interface IDbConnectionFactory
+    {
+        MeWriterDataContext CreateMeWriterDataContext();
     }
 }
