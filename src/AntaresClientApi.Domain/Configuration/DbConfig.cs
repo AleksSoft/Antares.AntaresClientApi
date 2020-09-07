@@ -5,5 +5,7 @@
         public string ConnectionString { get; set; }
 
         public string MeWriterConnectionString { get; set; }
+
+        public string CandleConnectionString { get; set; }
     }
 }

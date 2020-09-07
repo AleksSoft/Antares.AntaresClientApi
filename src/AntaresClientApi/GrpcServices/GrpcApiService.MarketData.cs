@@ -8,8 +8,10 @@ using Assets.Domain.MyNoSql;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using MoreLinq;
 using OrderBooks.MyNoSql.PriceData;
 using Swisschain.Lykke.AntaresWalletApi.ApiContract;
+using CandleType = AntaresClientApi.Database.CandleData.Models.CandleType;
 
 namespace AntaresClientApi.GrpcServices
 {
@@ -159,6 +161,96 @@ namespace AntaresClientApi.GrpcServices
             };
 
             return response;
+        }
+
+        public override async Task<CandlesResponse> GetCandles(CandlesRequest request, ServerCallContext context)
+        {
+            var symbol = request.AssetPairId;
+
+            TimeSpan delta;
+
+            const int defaultCountOfCandle = 1000;
+
+            AntaresClientApi.Database.CandleData.Models.CandleType interval;
+
+            switch (request.Interval)
+            {
+                //todo: implement other candle intervals;
+
+                //case CandleInterval.Min5:   delta = TimeSpan.FromMinutes(5); break;
+                //case CandleInterval.Min15:  delta = TimeSpan.FromMinutes(15); break;
+                //case CandleInterval.Min30:  delta = TimeSpan.FromMinutes(30); break;
+                case CandleInterval.Hour:   delta = TimeSpan.FromHours(1); interval = CandleType.Hour;  break;
+                //case CandleInterval.Hour4:  delta = TimeSpan.FromHours(4); break;
+                //case CandleInterval.Hour6:  delta = TimeSpan.FromHours(6); break;
+                //case CandleInterval.Hour12: delta = TimeSpan.FromHours(12); break;
+                case CandleInterval.Day:    delta = TimeSpan.FromDays(1); interval = CandleType.Day; break;
+                //case CandleInterval.Week:   delta = TimeSpan.FromDays(7); break;
+                case CandleInterval.Month:  delta = TimeSpan.FromDays(30); interval = CandleType.Month; break;
+                default:
+                {
+                    var response = new CandlesResponse();
+                    return response;
+                }
+            }
+
+            var toDate = DateTime.UtcNow;
+            var fromDate = toDate.AddSeconds(-delta.TotalSeconds * defaultCountOfCandle);
+
+            if (request.From != null && request.To != null)
+            {
+                fromDate = request.From.ToDateTime();
+                toDate = request.To.ToDateTime();
+            }
+            else if (request.From != null)
+            {
+                fromDate = request.From.ToDateTime();
+                toDate = fromDate.AddSeconds(delta.Seconds * defaultCountOfCandle);
+            }
+            else if (request.To != null)
+            {
+                toDate = request.To.ToDateTime();
+                fromDate = toDate.AddSeconds(-delta.Seconds * defaultCountOfCandle);
+            }
+
+            //todo: implement different charts for ask\bid\mig\trade
+            //request.Type
+
+
+            try
+            {
+                var candles = await _marketDataService.GetCandles(request.AssetPairId,
+                    fromDate,
+                    toDate,
+                    interval);
+
+                var result = new CandlesResponse()
+                {
+                    Candles =
+                    {
+                        candles.OrderBy(c => c.Time)
+                            .Select(c => new Candle()
+                            {
+                                Timestamp =
+                                    Timestamp.FromDateTime(DateTime.SpecifyKind(c.Time, DateTimeKind.Utc)),
+                                Volume = "0",
+                                OppositeVolume = "0",
+                                Open = c.Open.ToString(CultureInfo.InvariantCulture),
+                                Close = c.Close.ToString(CultureInfo.InvariantCulture),
+                                High = c.High.ToString(CultureInfo.InvariantCulture),
+                                Low = c.Close.ToString(CultureInfo.InvariantCulture),
+                                LastPrice = c.Close.ToString(CultureInfo.InvariantCulture)
+                            })
+                    }
+                };
+
+                return result;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
     }
 }

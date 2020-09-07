@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AntaresClientApi.Database.CandleData.Models;
+using AntaresClientApi.Database.Context;
 using Assets.Domain.Entities;
 using Assets.Domain.MyNoSql;
+using Microsoft.EntityFrameworkCore;
 using MyNoSqlServer.Abstractions;
 using OrderBooks.MyNoSql.OrderBookData;
 using OrderBooks.MyNoSql.PriceData;
@@ -15,16 +19,19 @@ namespace AntaresClientApi.Domain.Services
         private IMyNoSqlServerDataReader<AssetPairsEntity> _assetPairsReader;
         private readonly IMyNoSqlServerDataReader<OrderBookEntity> _orderBookDataReader;
         private readonly IMyNoSqlServerDataReader<PriceEntity> _priceDataReader;
+        private readonly IDbConnectionFactory _dbConnectionFactory;
 
         public MarketDataService(IMyNoSqlServerDataReader<AssetsEntity> assetsReader, 
             IMyNoSqlServerDataReader<AssetPairsEntity> assetPairsReader,
             IMyNoSqlServerDataReader<OrderBookEntity> orderBookDataReader,
-            IMyNoSqlServerDataReader<PriceEntity> priceDataReader)
+            IMyNoSqlServerDataReader<PriceEntity> priceDataReader,
+            IDbConnectionFactory dbConnectionFactory)
         {
             _assetsReader = assetsReader;
             _assetPairsReader = assetPairsReader;
             _orderBookDataReader = orderBookDataReader;
             _priceDataReader = priceDataReader;
+            _dbConnectionFactory = dbConnectionFactory;
         }
 
         public async Task<IReadOnlyList<Asset>> GetAssetsByTenant(string tenantId)
@@ -74,6 +81,22 @@ namespace AntaresClientApi.Domain.Services
         {
             var book = _orderBookDataReader.Get(OrderBookEntity.GeneratePartitionKey(tenantId), OrderBookEntity.GenerateRowKey(assetPairId));
             return book;
+        }
+
+        public async Task<IReadOnlyList<CandleEntity>> GetCandles(string symbol,
+            DateTime fromDate,
+            DateTime toDate,
+            AntaresClientApi.Database.CandleData.Models.CandleType interval)
+        {
+            using (var ctx = _dbConnectionFactory.CreateCandleDataContext())
+            {
+                var data = await ctx.Candles
+                    .Where(c => c.AssetPairId == symbol && c.Type == interval)
+                    .Where(c => c.Time >= fromDate && c.Time <= toDate)
+                    .ToListAsync();
+
+                return data;
+            }
         }
     }
 }

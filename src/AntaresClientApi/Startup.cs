@@ -103,7 +103,7 @@ namespace AntaresClientApi
 
             builder.RegisterMatchingEngineClient(Config.MatchingEngine);
 
-            builder.RegisterModule(new PostgresModule(Config.Db.MeWriterConnectionString));
+            builder.RegisterModule(new PostgresModule(Config.Db.MeWriterConnectionString, Config.Db.CandleConnectionString));
 
         }
 
