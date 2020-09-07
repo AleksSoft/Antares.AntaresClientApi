@@ -1,4 +1,5 @@
 ﻿using Assets.Client;
+using MatchingEngine.Client;
 
 namespace AntaresClientApi.Common.Configuration
 {
@@ -9,6 +10,8 @@ namespace AntaresClientApi.Common.Configuration
         public MyNoSqlConfig MyNoSqlServer { get; set; }
 
         public SessionConfig SessionConfig { get; set; }
+
+        public MatchingEngineClientSettings MatchingEngine { get; set; }
     }
 
     public class MyNoSqlConfig

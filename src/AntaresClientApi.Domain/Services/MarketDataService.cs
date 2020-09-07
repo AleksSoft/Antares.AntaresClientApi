@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Assets.Domain.Entities;
 using Assets.Domain.MyNoSql;
 using MyNoSqlServer.Abstractions;
+using OrderBooks.MyNoSql.OrderBookData;
+using OrderBooks.MyNoSql.PriceData;
 
 namespace AntaresClientApi.Domain.Services
 {
@@ -11,11 +13,18 @@ namespace AntaresClientApi.Domain.Services
     {
         private IMyNoSqlServerDataReader<AssetsEntity> _assetsReader;
         private IMyNoSqlServerDataReader<AssetPairsEntity> _assetPairsReader;
+        private readonly IMyNoSqlServerDataReader<OrderBookEntity> _orderBookDataReader;
+        private readonly IMyNoSqlServerDataReader<PriceEntity> _priceDataReader;
 
-        public MarketDataService(IMyNoSqlServerDataReader<AssetsEntity> assetsReader, IMyNoSqlServerDataReader<AssetPairsEntity> assetPairsReader)
+        public MarketDataService(IMyNoSqlServerDataReader<AssetsEntity> assetsReader, 
+            IMyNoSqlServerDataReader<AssetPairsEntity> assetPairsReader,
+            IMyNoSqlServerDataReader<OrderBookEntity> orderBookDataReader,
+            IMyNoSqlServerDataReader<PriceEntity> priceDataReader)
         {
             _assetsReader = assetsReader;
             _assetPairsReader = assetPairsReader;
+            _orderBookDataReader = orderBookDataReader;
+            _priceDataReader = priceDataReader;
         }
 
         public async Task<IReadOnlyList<Asset>> GetAssetsByTenant(string tenantId)
@@ -53,6 +62,18 @@ namespace AntaresClientApi.Domain.Services
                 return usd;
 
             return assets.FirstOrDefault(a => !a.IsDisabled);
+        }
+
+        public IReadOnlyList<PriceEntity> GetPrices(string tenantId)
+        {
+            var prices = _priceDataReader.Get(PriceEntity.GeneratePartitionKey(tenantId));
+            return prices;
+        }
+
+        public OrderBookEntity OrderBook(string tenantId, string assetPairId)
+        {
+            var book = _orderBookDataReader.Get(OrderBookEntity.GeneratePartitionKey(tenantId), OrderBookEntity.GenerateRowKey(assetPairId));
+            return book;
         }
     }
 }

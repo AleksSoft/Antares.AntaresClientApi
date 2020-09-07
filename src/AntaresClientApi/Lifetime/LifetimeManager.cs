@@ -6,6 +6,8 @@ using Autofac;
 using Microsoft.Extensions.Logging;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
+using OrderBooks.MyNoSql.OrderBookData;
+using OrderBooks.MyNoSql.PriceData;
 
 namespace AntaresClientApi.Lifetime
 { 
@@ -21,7 +23,10 @@ namespace AntaresClientApi.Lifetime
         private readonly IMyNoSqlServerDataReader<PersonalDataEntity> _personalDataReader;
         private readonly IMyNoSqlServerDataReader<AuthDataEntity> _authDataReader;
         private readonly IMyNoSqlServerDataReader<AuthDataIndexByIdEntity> _authIndexNyIdDataReader;
-        private IMyNoSqlServerDataReader<ClientProfileEntity> _clientProfileDataReader;
+        private readonly IMyNoSqlServerDataReader<ClientProfileEntity> _clientProfileDataReader;
+        private readonly IMyNoSqlServerDataReader<OrderBookEntity> _orderBookDataReader;
+        private readonly IMyNoSqlServerDataReader<PriceEntity> _priceDataReader;
+
 
         public LifetimeManager(
             ILogger<LifetimeManager> logger,
@@ -34,7 +39,10 @@ namespace AntaresClientApi.Lifetime
             IMyNoSqlServerDataReader<PersonalDataEntity> personalDataReader,
             IMyNoSqlServerDataReader<AuthDataEntity> authDataReader,
             IMyNoSqlServerDataReader<AuthDataIndexByIdEntity> authIndexNyIdDataReader,
-            IMyNoSqlServerDataReader<ClientProfileEntity> clientProfileDataReader)
+            IMyNoSqlServerDataReader<ClientProfileEntity> clientProfileDataReader,
+            IMyNoSqlServerDataReader<OrderBookEntity> orderBookDataReader,
+            IMyNoSqlServerDataReader<PriceEntity> priceDataReader
+            )
         {
             _logger = logger;
             _client = client;
@@ -47,6 +55,8 @@ namespace AntaresClientApi.Lifetime
             _authDataReader = authDataReader;
             _authIndexNyIdDataReader = authIndexNyIdDataReader;
             _clientProfileDataReader = clientProfileDataReader;
+            _orderBookDataReader = orderBookDataReader;
+            _priceDataReader = priceDataReader;
         }
 
         public void Start()
@@ -66,6 +76,8 @@ namespace AntaresClientApi.Lifetime
             _logger.LogInformation("authDataReader - count: {Count}", _authDataReader.Count());
             _logger.LogInformation("authIndexNyIdDataReader - count: {Count}", _authIndexNyIdDataReader.Count());
             _logger.LogInformation("clientProfileDataReader - count: {Count}", _clientProfileDataReader.Count());
+            _logger.LogInformation("orderBookDataReader - count: {Count}", _orderBookDataReader.Count());
+            _logger.LogInformation("priceDataReader - count: {Count}", _priceDataReader.Count());
 
 
             _logger.LogInformation("LifetimeManager started");

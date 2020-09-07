@@ -17,10 +17,15 @@ using Assets.Domain.MyNoSql;
 using Autofac;
 using Common;
 using Grpc.AspNetCore.Server;
+using MatchingEngine.Client;
+using MatchingEngine.Client.Contracts.Incoming;
+using MatchingEngine.Client.Extensions;
 using Microsoft.Extensions.Options;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 using Newtonsoft.Json;
+using OrderBooks.MyNoSql.OrderBookData;
+using OrderBooks.MyNoSql.PriceData;
 using Swisschain.Sdk.Server.Common;
 
 namespace AntaresClientApi
@@ -94,6 +99,10 @@ namespace AntaresClientApi
                 .As<IMarketDataService>()
                 .SingleInstance();
 
+            
+
+            builder.RegisterMatchingEngineClient(Config.MatchingEngine);
+
             builder.RegisterModule(new PostgresModule(Config.Db.MeWriterConnectionString));
 
         }
@@ -128,6 +137,9 @@ namespace AntaresClientApi
 
             RegisterNoSqlReader<AssetsEntity>(builder, SetupMyNoSqlAssetService.AssetsTableName);
             RegisterNoSqlReader<AssetPairsEntity>(builder, SetupMyNoSqlAssetService.AssetPairsTableName);
+
+            RegisterNoSqlReader<OrderBookEntity>(builder, OrderBookEntity.OrderBookTableName);
+            RegisterNoSqlReader<PriceEntity>(builder, PriceEntity.PriceTableName);
         }
 
 
