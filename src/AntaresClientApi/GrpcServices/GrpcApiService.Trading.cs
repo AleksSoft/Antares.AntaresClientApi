@@ -68,7 +68,7 @@ namespace AntaresClientApi.GrpcServices
                     {
                         Id = meRequest.Id,
                         AssetPair = meRequest.AssetPairId,
-                        DateTime = meRequest.Timestamp.ToDateTime().ToString("O"),
+                        DateTime = meRequest.Timestamp,
                         Price = meRequest.Price,
                         Volume = absVolume.ToString(CultureInfo.InvariantCulture),
                         OrderType = request.Volume > 0 ? OrderSide.Buy.ToString() : OrderSide.Sell.ToString(),
@@ -126,7 +126,7 @@ namespace AntaresClientApi.GrpcServices
                     {
                         Id = meRequest.Id,
                         AssetPair = meRequest.AssetPairId,
-                        DateTime = meRequest.Timestamp.ToDateTime().ToString("O"),
+                        DateTime = meRequest.Timestamp,
                         Price = response.Price,
                         Volume = absVolume.ToString(CultureInfo.InvariantCulture),
                         OrderType = request.Volume > 0 ? OrderSide.Buy.ToString() : OrderSide.Sell.ToString(),

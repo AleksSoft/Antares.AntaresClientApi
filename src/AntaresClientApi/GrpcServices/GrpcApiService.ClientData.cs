@@ -110,7 +110,7 @@ namespace AntaresClientApi.GrpcServices
                         orders.Select(o => new LimitOrderModel()
                         {
                             Id = o.ExternalId,
-                            DateTime = o.CreatedAt.ToString("O"),
+                            DateTime = Timestamp.FromDateTime(DateTime.SpecifyKind(o.CreatedAt, DateTimeKind.Utc)),
                             Asset = string.Empty,
                             Price = o.Price,
                             Volume = o.Volume.Replace("-",""),
