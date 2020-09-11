@@ -29,7 +29,13 @@
 
         public const string ClientAlreadyExist = "Email is already registered. Try to sign-in or use a different email address.";
 
-        
+        public const string WrongVolume = "Invalid volume value.";
+
+        public const string WrongPrice = "Invalid price value.";
+
+        public static string MeError(string meStatusCode, string meReason) => $"ME return an error. StatusCode: {meStatusCode}; Reason: {meReason}";
+
+
 
     }
 }

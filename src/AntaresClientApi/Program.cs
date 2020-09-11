@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using AntaresClientApi.Database.MeData;
+using Lykke.Common.Log;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog.Events;
 using Swisschain.Sdk.Server.Common;
 using Swisschain.Sdk.Server.Logging;
 
@@ -15,14 +18,17 @@ namespace AntaresClientApi
             public IReadOnlyCollection<string> RemoteSettingsUrls { get; set; }
         }
 
+        
         public static void Main(string[] args)
         {
             Console.Title = "Antares AntaresClientApi";
 
             var remoteSettingsConfig = ApplicationEnvironment.Config.Get<RemoteSettingsConfig>();
 
-            using var loggerFactory = LogConfigurator.Configure("Antares", remoteSettingsConfig.RemoteSettingsUrls ?? Array.Empty<string>());
-            
+            var loggerFactory = LogConfigurator.Configure("Antares", remoteSettingsConfig.RemoteSettingsUrls ?? Array.Empty<string>());
+
+            MeWriterDataContext.LoggerFactory = loggerFactory;
+
             var logger = loggerFactory.CreateLogger<Program>();
 
             try

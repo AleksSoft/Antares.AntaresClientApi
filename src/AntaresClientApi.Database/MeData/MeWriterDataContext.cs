@@ -1,11 +1,16 @@
 ﻿using AntaresClientApi.Database.MeData.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
 
 namespace AntaresClientApi.Database.MeData
 {
     public class MeWriterDataContext: DbContext
     {
+        public static ILoggerFactory LoggerFactory { get; set; }
+
         private string _connectionString;
 
         public MeWriterDataContext()
@@ -19,9 +24,14 @@ namespace AntaresClientApi.Database.MeData
 
         public DbSet<BalanceDbEntity> Balances { get; set; }
 
+        public DbSet<OrderDbEntity> Orders { get; set; }
+
+        public DbSet<TradeDbEntity> Trades { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
             
             //if (_connectionString == null)
             //{
@@ -29,7 +39,10 @@ namespace AntaresClientApi.Database.MeData
             //    _connectionString = System.Console.ReadLine();
             //}
 
-            optionsBuilder.UseNpgsql(_connectionString,
+            optionsBuilder
+                //.UseLoggerFactory(LoggerFactory)
+                //.EnableSensitiveDataLogging()
+                .UseNpgsql(_connectionString,
                 o => o.MigrationsHistoryTable(HistoryRepository.DefaultTableName));
         }
 

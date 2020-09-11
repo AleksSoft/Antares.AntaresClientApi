@@ -8,6 +8,7 @@ using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 using OrderBooks.MyNoSql.OrderBookData;
 using OrderBooks.MyNoSql.PriceData;
+using Prometheus.DotNetRuntime;
 
 namespace AntaresClientApi.Lifetime
 { 
@@ -26,6 +27,8 @@ namespace AntaresClientApi.Lifetime
         private readonly IMyNoSqlServerDataReader<ClientProfileEntity> _clientProfileDataReader;
         private readonly IMyNoSqlServerDataReader<OrderBookEntity> _orderBookDataReader;
         private readonly IMyNoSqlServerDataReader<PriceEntity> _priceDataReader;
+
+        private IDisposable _collector;
 
 
         public LifetimeManager(
@@ -61,6 +64,9 @@ namespace AntaresClientApi.Lifetime
 
         public void Start()
         {
+            _collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+
+
             _logger.LogInformation("LifetimeManager starting...");
             _client.Start();
 
@@ -89,6 +95,8 @@ namespace AntaresClientApi.Lifetime
             {
                 _client.Stop();
             }
+
+            _collector?.Dispose();
         }
     }
 }

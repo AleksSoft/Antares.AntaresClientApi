@@ -21,7 +21,8 @@ namespace AntaresClientApi.Domain.Services
         private readonly IMyNoSqlServerDataReader<PriceEntity> _priceDataReader;
         private readonly IDbConnectionFactory _dbConnectionFactory;
 
-        public MarketDataService(IMyNoSqlServerDataReader<AssetsEntity> assetsReader, 
+        public MarketDataService(
+            IMyNoSqlServerDataReader<AssetsEntity> assetsReader, 
             IMyNoSqlServerDataReader<AssetPairsEntity> assetPairsReader,
             IMyNoSqlServerDataReader<OrderBookEntity> orderBookDataReader,
             IMyNoSqlServerDataReader<PriceEntity> priceDataReader,
@@ -56,6 +57,12 @@ namespace AntaresClientApi.Domain.Services
             }
 
             return pairs.AssetPairs;
+        }
+
+        public async Task<AssetPair> GetAssetPairByTenantAndId(string tenantId, string assetPairId)
+        {
+            var pairs = await GetAssetPairsByTenant(tenantId);
+            return pairs.FirstOrDefault(p => p.Symbol == assetPairId);
         }
 
         public async Task<Asset> GetDefaultBaseAsset(string tenantId)

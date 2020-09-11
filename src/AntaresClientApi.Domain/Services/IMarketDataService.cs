@@ -12,6 +12,7 @@ namespace AntaresClientApi.Domain.Services
     {
         Task<IReadOnlyList<Asset>> GetAssetsByTenant(string tenantId);
         Task<IReadOnlyList<AssetPair>> GetAssetPairsByTenant(string tenantId);
+        Task<AssetPair> GetAssetPairByTenantAndId(string tenantId, string assetPairId);
 
         Task<Asset> GetDefaultBaseAsset(string tenantId);
         IReadOnlyList<PriceEntity> GetPrices(string tenantId);

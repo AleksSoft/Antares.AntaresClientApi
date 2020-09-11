@@ -20,12 +20,14 @@ using Grpc.AspNetCore.Server;
 using MatchingEngine.Client;
 using MatchingEngine.Client.Contracts.Incoming;
 using MatchingEngine.Client.Extensions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 using Newtonsoft.Json;
 using OrderBooks.MyNoSql.OrderBookData;
 using OrderBooks.MyNoSql.PriceData;
+using Prometheus;
 using Swisschain.Sdk.Server.Common;
 
 namespace AntaresClientApi
@@ -45,6 +47,11 @@ namespace AntaresClientApi
 
             endpoints.MapGrpcService<MonitoringService>();
             endpoints.MapGrpcService<GrpcApiService>();
+        }
+
+        protected override void ConfigureExt(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseMetricServer();
         }
 
         protected override void ConfigureContainerExt(ContainerBuilder builder)
