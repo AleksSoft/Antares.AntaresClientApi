@@ -16,5 +16,6 @@ namespace AntaresClientApi.Domain.Services
             string requestPassword,
             string requestHint,
             string requestPin);
+
     }
 }

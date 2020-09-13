@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models.Extensions;
 using Common;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -205,6 +206,15 @@ namespace AntaresClientApi.GrpcServices
             await _sessionService.ProlongateAndSaveSessionAsync(session);
 
             return result;
+        }
+
+        public override async Task<EmptyResponse> Logout(Empty request, ServerCallContext context)
+        {
+            var session = SessionFromContext(context);
+
+            await _sessionService.CloseSession(session, "client logout");
+
+            return new EmptyResponse();
         }
 
         private LoginResponse ValidateLoginRequest(LoginRequest request)
