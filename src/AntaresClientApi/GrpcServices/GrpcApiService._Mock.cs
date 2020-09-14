@@ -5,6 +5,7 @@ using Assets.Client;
 using Assets.Domain.MyNoSql;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using MyNoSqlServer.Abstractions;
 using Swisschain.Lykke.AntaresWalletApi.ApiContract;
@@ -498,6 +499,7 @@ namespace AntaresClientApi.GrpcServices
 
         #region Other
 
+        [AllowAnonymous]
         public override Task<CountryPhoneCodesResponse> GetCountryPhoneCodes(Empty request, ServerCallContext context)
         {
             var resp = new CountryPhoneCodesResponse();
