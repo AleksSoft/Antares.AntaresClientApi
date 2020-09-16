@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using AntaresClientApi.Domain.Services;
 using Assets.Client;
 using Assets.Domain.MyNoSql;
+using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -16,10 +21,34 @@ namespace AntaresClientApi.GrpcServices
     {
         #region MarketData
 
-        public override Task<MarketsResponse> GetMarkets(MarketsRequest request, ServerCallContext context)
+        public override async Task<MarketsResponse> GetMarkets(MarketsRequest request, ServerCallContext context)
         {
+            var prices = await GetPrices(new PricesRequest(), context);
+
             var result = new MarketsResponse();
-            return Task.FromResult(result);
+
+            foreach (var price in prices.Prices)
+            {
+                var ask = !string.IsNullOrEmpty(price.Ask) ? decimal.Parse(price.Ask) : 0m;
+                var bid = !string.IsNullOrEmpty(price.Bid) ? decimal.Parse(price.Bid) : 0m;
+
+                var item = new MarketsResponse.Types.MarketModel()
+                {
+                    AssetPair = price.AssetPairId,
+                    Ask = price.Ask,
+                    Bid = price.Bid,
+                    High = Math.Max(ask, bid).ToString(CultureInfo.InvariantCulture),
+                    LastPrice = price.Ask,
+                    Low = Math.Min(ask, bid).ToString(CultureInfo.InvariantCulture),
+                    PriceChange24H = price.PriceChange24H,
+                    Volume24H = price.VolumeBase24H
+                };
+
+                result.Markets.Add(item);
+            }
+
+            
+            return result;
         }
 
         public override Task<PublicTradesResponse> GetPublicTrades(PublicTradesRequest request, ServerCallContext context)
@@ -91,29 +120,93 @@ namespace AntaresClientApi.GrpcServices
 
         #region ClientState
 
-        public override Task<WatchlistsResponse> GetWatchlists(Empty request, ServerCallContext context)
+        public override async Task<WatchlistsResponse> GetWatchlists(Empty request, ServerCallContext context)
         {
-            return base.GetWatchlists(request, context);
+            var pairs = await GetAssetPairs(new Empty(), context);
+
+            var response = new WatchlistsResponse()
+            {
+                Result =
+                {
+                    new Watchlist()
+                    {
+                        Id = "all-pairs",
+                        Name = "All pairs",
+                        Order = 1,
+                        Readonly = true
+                    }
+                }
+            };
+
+            response.Result.First().AssetIds.AddRange(pairs.AssetPairs.Select(p => p.Id));
+
+            return response;
         }
 
-        public override Task<WatchlistResponse> GetWatchlist(WatchlistRequest request, ServerCallContext context)
+        public override async Task<WatchlistResponse> GetWatchlist(WatchlistRequest request, ServerCallContext context)
         {
-            return base.GetWatchlist(request, context);
+            var pairs = await GetAssetPairs(new Empty(), context);
+
+            var response = new WatchlistResponse()
+            {
+                Result = new Watchlist()
+                {
+                    Id = "all-pairs",
+                    Name = "All pairs",
+                    Order = 1,
+                    Readonly = true
+                }
+            };
+
+            response.Result.AssetIds.AddRange(pairs.AssetPairs.Select(p => p.Id));
+
+            return response;
         }
 
-        public override Task<WatchlistResponse> AddWatchlist(AddWatchlistRequest request, ServerCallContext context)
+        public override async Task<WatchlistResponse> AddWatchlist(AddWatchlistRequest request, ServerCallContext context)
         {
-            return base.AddWatchlist(request, context);
+            var pairs = await GetAssetPairs(new Empty(), context);
+
+            var response = new WatchlistResponse()
+            {
+                Result = new Watchlist()
+                {
+                    Id = "all-pairs",
+                    Name = "All pairs",
+                    Order = 1,
+                    Readonly = true
+                }
+            };
+
+            response.Result.AssetIds.AddRange(pairs.AssetPairs.Select(p => p.Id));
+
+            return response;
         }
 
-        public override Task<WatchlistResponse> UpdateWatchlist(UpdateWatchlistRequest request, ServerCallContext context)
+        public override async Task<WatchlistResponse> UpdateWatchlist(UpdateWatchlistRequest request, ServerCallContext context)
         {
-            return base.UpdateWatchlist(request, context);
+            var pairs = await GetAssetPairs(new Empty(), context);
+
+            var response = new WatchlistResponse()
+            {
+                Result = new Watchlist()
+                {
+                    Id = "all-pairs",
+                    Name = "All pairs",
+                    Order = 1,
+                    Readonly = true
+                }
+            };
+
+            response.Result.AssetIds.AddRange(pairs.AssetPairs.Select(p => p.Id));
+
+            return response;
         }
 
-        public override Task<DeleteWatchlistResponse> DeleteWatchlist(DeleteWatchlistRequest request, ServerCallContext context)
+        public override async Task<DeleteWatchlistResponse> DeleteWatchlist(DeleteWatchlistRequest request, ServerCallContext context)
         {
-            return base.DeleteWatchlist(request, context);
+            var response = new DeleteWatchlistResponse();
+            return response;
         }
 
         #endregion
