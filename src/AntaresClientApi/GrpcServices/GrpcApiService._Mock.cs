@@ -23,28 +23,53 @@ namespace AntaresClientApi.GrpcServices
 
         public override async Task<MarketsResponse> GetMarkets(MarketsRequest request, ServerCallContext context)
         {
+            var session = SessionFromContext(context);
+
             var prices = await GetPrices(new PricesRequest(), context);
 
             var result = new MarketsResponse();
 
-            foreach (var price in prices.Prices)
+
+            var pairs = await _marketDataService.GetAssetPairsByTenant(session.TenantId);
+
+            foreach (var pair in pairs)
             {
-                var ask = !string.IsNullOrEmpty(price.Ask) ? decimal.Parse(price.Ask) : 0m;
-                var bid = !string.IsNullOrEmpty(price.Bid) ? decimal.Parse(price.Bid) : 0m;
-
-                var item = new MarketsResponse.Types.MarketModel()
+                var price = prices.Prices.FirstOrDefault(e => e.AssetPairId == pair.Id.ToString());
+                if (price != null)
                 {
-                    AssetPair = price.AssetPairId,
-                    Ask = price.Ask,
-                    Bid = price.Bid,
-                    High = Math.Max(ask, bid).ToString(CultureInfo.InvariantCulture),
-                    LastPrice = price.Ask,
-                    Low = Math.Min(ask, bid).ToString(CultureInfo.InvariantCulture),
-                    PriceChange24H = price.PriceChange24H,
-                    Volume24H = price.VolumeBase24H
-                };
+                    var ask = !string.IsNullOrEmpty(price.Ask) ? decimal.Parse(price.Ask) : 0m;
+                    var bid = !string.IsNullOrEmpty(price.Bid) ? decimal.Parse(price.Bid) : 0m;
 
-                result.Markets.Add(item);
+                    var item = new MarketsResponse.Types.MarketModel()
+                    {
+                        AssetPair = price.AssetPairId,
+                        Ask = price.Ask,
+                        Bid = price.Bid,
+                        High = Math.Max(ask, bid).ToString(CultureInfo.InvariantCulture),
+                        LastPrice = price.Ask,
+                        Low = Math.Min(ask, bid).ToString(CultureInfo.InvariantCulture),
+                        PriceChange24H = price.PriceChange24H,
+                        Volume24H = price.VolumeBase24H
+                    };
+
+                    result.Markets.Add(item);
+                }
+                else
+                {
+                    var item = new MarketsResponse.Types.MarketModel()
+                    {
+                        AssetPair = pair.Symbol,
+                        Ask = "0",
+                        Bid = "0",
+                        High = "0",
+                        LastPrice = "0",
+                        Low = "0",
+                        PriceChange24H = "0",
+                        Volume24H = "0"
+                    };
+
+                    result.Markets.Add(item);
+                }
             }
 
             if (result.Markets.All(e => e.AssetPair != "BTCUSD"))
