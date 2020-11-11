@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models;
 using AntaresClientApi.Domain.Models.MyNoSql;
 using AntaresClientApi.Domain.Services.Extention;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.Extensions.Logging;
 using MyNoSqlServer.Abstractions;
 
 namespace AntaresClientApi.Domain.Services
@@ -16,11 +19,15 @@ namespace AntaresClientApi.Domain.Services
 
         private readonly IMyNoSqlServerDataWriter<ClientProfileEntity> _clientProfileDataWriter;
         private readonly IMyNoSqlServerDataReader<ClientProfileEntity> _clientProfileDataReader;
+        private readonly ICashInOutProcessor _cashInOutProcessor;
+        private readonly ILogger<ClientAccountManager> _logger;
         private readonly IMarketDataService _marketDataService;
 
         public ClientAccountManager(IPersonalData personalData, IAuthService authService, IClientWalletService clientWalletService,
             IMyNoSqlServerDataWriter<ClientProfileEntity> clientProfileDataWriter, IMarketDataService marketDataService,
-            IMyNoSqlServerDataReader<ClientProfileEntity> clientProfileDataReader)
+            IMyNoSqlServerDataReader<ClientProfileEntity> clientProfileDataReader,
+            ICashInOutProcessor cashInOutProcessor,
+            ILogger<ClientAccountManager> logger)
         {
             _personalData = personalData;
             _authService = authService;
@@ -28,6 +35,8 @@ namespace AntaresClientApi.Domain.Services
             _clientProfileDataWriter = clientProfileDataWriter;
             _marketDataService = marketDataService;
             _clientProfileDataReader = clientProfileDataReader;
+            _cashInOutProcessor = cashInOutProcessor;
+            _logger = logger;
         }
 
         public async Task<RegistrationResult> RegisterAccountAsync(
@@ -54,7 +63,7 @@ namespace AntaresClientApi.Domain.Services
                 return null;
             }
 
-            await _clientWalletService.RegisterOrGetDefaultWallets(identity);
+            var wallet = await _clientWalletService.RegisterOrGetDefaultWallets(identity);
 
             await CreateClientProfile(tenantId, identity.ClientId);
 
@@ -66,7 +75,28 @@ namespace AntaresClientApi.Domain.Services
                 hint,
                 pin);
 
+            await DepositDemoAssets(wallet);
+
             return result;
+        }
+
+        private async Task DepositDemoAssets(ClientWalletEntity wallet)
+        {
+            try
+            {
+                var asset = await _marketDataService.GetDefaultBaseAsset(wallet.Client.TenantId);
+                if (asset != null)
+                {
+                    await _cashInOutProcessor.ChangeBalance(wallet,
+                        asset,
+                        10000,
+                        "Deposit demo amount");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Cannot register demo deposit: {ex.Message}");
+            }
         }
 
         public async Task<ClientProfileEntity> GetClientProfile(string tenantId, long clientId)

@@ -11,6 +11,8 @@ namespace AntaresClientApi.Domain.Services
     public interface IMarketDataService
     {
         Task<IReadOnlyList<Asset>> GetAssetsByTenant(string tenantId);
+        Task<Asset> GetAssetByTenantAndId(string tenantId, long assetId);
+
         Task<IReadOnlyList<AssetPair>> GetAssetPairsByTenant(string tenantId);
         Task<AssetPair> GetAssetPairByTenantAndId(string tenantId, string assetPairId);
 
@@ -19,5 +21,7 @@ namespace AntaresClientApi.Domain.Services
         OrderBookEntity OrderBook(string tenantId, string assetPairId);
         Task<IReadOnlyList<CandleEntity>> GetCandles(string symbol, DateTime fromDate, DateTime toDate,
             AntaresClientApi.Database.CandleData.Models.CandleType interval);
+
+        
     }
 }

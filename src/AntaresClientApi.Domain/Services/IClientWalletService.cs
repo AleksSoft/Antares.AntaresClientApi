@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models;
 using AntaresClientApi.Domain.Models.MyNoSql;
 using AntaresClientApi.Domain.Models.Wallet;
+using Assets.Domain.Entities;
 
 namespace AntaresClientApi.Domain.Services
 {
@@ -25,5 +26,6 @@ namespace AntaresClientApi.Domain.Services
             int take);
 
         Task<long> GetWalletIdAsync(string tenantId, long clientId);
+
     }
 }

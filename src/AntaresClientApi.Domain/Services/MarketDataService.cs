@@ -47,6 +47,13 @@ namespace AntaresClientApi.Domain.Services
             return assets.Assets;
         }
 
+        public async Task<Asset> GetAssetByTenantAndId(string tenantId, long assetId)
+        {
+            var assets = await GetAssetsByTenant(tenantId);
+            var asset = assets.FirstOrDefault(a => a.Id == assetId);
+            return asset;
+        }
+
         public async Task<IReadOnlyList<AssetPair>> GetAssetPairsByTenant(string tenantId)
         {
             var pairs = _assetPairsReader.Get(AssetPairsEntity.GetPartitionKey(tenantId), AssetPairsEntity.GetRowKey());

@@ -106,7 +106,9 @@ namespace AntaresClientApi
                 .As<IMarketDataService>()
                 .SingleInstance();
 
-            
+            builder.RegisterType<CashInOutProcessor>()
+                .As<ICashInOutProcessor>()
+                .SingleInstance();
 
             builder.RegisterMatchingEngineClient(Config.MatchingEngine);
 

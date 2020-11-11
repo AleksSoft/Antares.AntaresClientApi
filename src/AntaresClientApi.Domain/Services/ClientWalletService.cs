@@ -8,6 +8,7 @@ using AntaresClientApi.Domain.Models;
 using AntaresClientApi.Domain.Models.MyNoSql;
 using AntaresClientApi.Domain.Models.Wallet;
 using AntaresClientApi.Domain.Services.Extention;
+using Assets.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyNoSqlServer.Abstractions;
