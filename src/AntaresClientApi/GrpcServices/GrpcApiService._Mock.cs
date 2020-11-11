@@ -47,6 +47,23 @@ namespace AntaresClientApi.GrpcServices
                 result.Markets.Add(item);
             }
 
+            if (result.Markets.All(e => e.AssetPair != "BTCUSD"))
+            {
+                var item = new MarketsResponse.Types.MarketModel()
+                {
+                    AssetPair = "BTCUSD",
+                    Ask = "0",
+                    Bid = "0",
+                    High = "0",
+                    LastPrice = "0",
+                    Low = "0",
+                    PriceChange24H = "0",
+                    Volume24H = "0"
+                };
+
+                result.Markets.Add(item);
+            }
+
             
             return result;
         }
