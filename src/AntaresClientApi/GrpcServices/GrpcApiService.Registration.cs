@@ -7,6 +7,7 @@ using AntaresClientApi.Domain.Models.Extensions;
 using Common;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Swisschain.Lykke.AntaresWalletApi.ApiContract;
 
 namespace AntaresClientApi.GrpcServices
@@ -27,7 +28,7 @@ namespace AntaresClientApi.GrpcServices
                     }
                 };
             }
-            
+
             var (registration, token) = await _registrationTokenService.CreateAsync();
 
             var codeHash = await _emailVerification.SendVerificationEmail(request.Email);
@@ -121,7 +122,7 @@ namespace AntaresClientApi.GrpcServices
             }
 
             var codeHash = await _smsVerification.SendVerificationSms(request.Phone);
-            
+
             if (string.IsNullOrEmpty(codeHash))
             {
                 return new EmptyResponse()
@@ -173,6 +174,7 @@ namespace AntaresClientApi.GrpcServices
         [AllowAnonymous]
         public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
         {
+            _logger.LogInformation("Registration request", request.ToJson());
             var token = await _registrationTokenService.GetByOriginalTokenAsync(request.Token);
 
             if (token == null || token.ExpirationDate <= DateTime.UtcNow
@@ -252,7 +254,7 @@ namespace AntaresClientApi.GrpcServices
             var (_, sessionToken) = await _sessionService.CreateVerifiedSessionAsync(token.TenantId,
                 token.ClientId,
                 request.PublicKey);
-            
+
 
             return new RegisterResponse()
             {
