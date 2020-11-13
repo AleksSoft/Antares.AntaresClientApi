@@ -174,7 +174,7 @@ namespace AntaresClientApi.GrpcServices
         [AllowAnonymous]
         public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
         {
-            _logger.LogInformation("Registration request", request.ToJson());
+            _logger.LogInformation($"Registration request: {request.ToJson()}");
             var token = await _registrationTokenService.GetByOriginalTokenAsync(request.Token);
 
             if (token == null || token.ExpirationDate <= DateTime.UtcNow
