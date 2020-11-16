@@ -29,6 +29,8 @@ namespace AntaresClientApi.GrpcServices
 
             var response = new AssetsDictionaryResponse();
 
+            var fiatAssets = new List<string>{"CHF", "EUR", "USA"};
+            var cryptoAssets = new List<string>{"BTC", "ETH", "ETHtest", "BTCtest"};
             //todo: add all parameters in AssetService
             foreach (var asset in assets.Where(a => !a.IsDisabled))
             {
@@ -41,10 +43,10 @@ namespace AntaresClientApi.GrpcServices
                         accuracy: asset.Accuracy,
                         kycNeeded: true,
                         categoryId: DefaultAssetCategoryId,
-                        cardDeposit: false,
-                        swiftDeposit: false,
-                        blockchainDeposit: false,
-                        swiftWithdrawal: false,
+                        cardDeposit: fiatAssets.Contains(asset.Symbol),
+                        swiftDeposit: fiatAssets.Contains(asset.Symbol),
+                        blockchainDeposit: cryptoAssets.Contains(asset.Symbol),
+                        swiftWithdrawal: fiatAssets.Contains(asset.Symbol),
                         forwardWithdrawa: false,
                         crosschainWithdrawal: false,
                         isTrusted: true,
