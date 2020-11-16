@@ -45,7 +45,7 @@ namespace AntaresClientApi.GrpcServices
                 AccountId = (ulong) session.ClientId,
                 BrokerId = session.TenantId,
                 WalletId = (ulong) walletId,
-                AssetPairId = assetPair.Id.ToString(),
+                AssetPairId = assetPair.Symbol,
                 Price = request.Price.ToString(CultureInfo.InvariantCulture),
                 Volume = request.Volume.ToString(CultureInfo.InvariantCulture),
                 Type = LimitOrder.Types.LimitOrderType.Limit,
@@ -104,7 +104,7 @@ namespace AntaresClientApi.GrpcServices
                 AccountId = (ulong)session.ClientId,
                 BrokerId = session.TenantId,
                 WalletId = (ulong)walletId,
-                AssetPairId = assetPair.Id.ToString(),
+                AssetPairId = assetPair.Symbol,
                 Volume = request.Volume.ToString(CultureInfo.InvariantCulture),
                 Timestamp = Timestamp.FromDateTime(DateTime.UtcNow),
             };

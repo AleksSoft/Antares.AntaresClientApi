@@ -15,7 +15,7 @@ namespace AntaresClientApi.Domain.Services.Mock
         private readonly IMyNoSqlServerDataWriter<AuthDataEntity> _dataWriter;
         private readonly IMyNoSqlServerDataWriter<AuthDataIndexByIdEntity> _indexDataWriter;
 
-        public AuthServiceMock(IMyNoSqlServerDataWriter<AuthDataEntity> dataWriter, 
+        public AuthServiceMock(IMyNoSqlServerDataWriter<AuthDataEntity> dataWriter,
             IMyNoSqlServerDataWriter<AuthDataIndexByIdEntity> indexDataWriter)
         {
             _dataWriter = dataWriter;
@@ -26,7 +26,7 @@ namespace AntaresClientApi.Domain.Services.Mock
         {
             var data = await _dataWriter.TryGetAsync(AuthDataEntity.GeneratePartitionKey(), AuthDataEntity.GenerateRowKey(tenantId, username));
 
-            if (data.PasswordHash == password.ToSha256().ToBase64())
+            if (data.PasswordHash == password.ToSha256())
             {
                 var indexEntity = AuthDataIndexByIdEntity.Generate(data.TenantId, data.ClientId, data.Email);
                 await _indexDataWriter.InsertOrReplaceAsync(indexEntity);
