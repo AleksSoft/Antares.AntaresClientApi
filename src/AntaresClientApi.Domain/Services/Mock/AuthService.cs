@@ -26,7 +26,7 @@ namespace AntaresClientApi.Domain.Services.Mock
         {
             var data = await _dataWriter.TryGetAsync(AuthDataEntity.GeneratePartitionKey(), AuthDataEntity.GenerateRowKey(tenantId, username));
 
-            if (data.PasswordHash == password.ToSha256())
+            if (data.PasswordHash == password.ToSha256().ToBase64())
             {
                 var indexEntity = AuthDataIndexByIdEntity.Generate(data.TenantId, data.ClientId, data.Email);
                 await _indexDataWriter.InsertOrReplaceAsync(indexEntity);
@@ -68,7 +68,7 @@ namespace AntaresClientApi.Domain.Services.Mock
             entity.ClientId = clientId;
             entity.Hint = requestHint;
             entity.Email = requestEmail;
-            entity.PasswordHash = requestPassword.ToSha256().ToBase64();
+            entity.PasswordHash = requestPassword.ToBase64();
             entity.PinHash = requestPin.ToSha256().ToBase64();
             entity.TenantId = tenantId;
 

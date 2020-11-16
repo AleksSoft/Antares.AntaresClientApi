@@ -15,7 +15,6 @@ namespace AntaresClientApi.GrpcServices
         [AllowAnonymous]
         public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
         {
-            _logger.LogInformation($"Login request: {request.ToJson()}");
             var validateResult = ValidateLoginRequest(request);
 
             if (validateResult != null)
