@@ -10,11 +10,12 @@ using Swisschain.Lykke.AntaresWalletApi.ApiContract;
 
 namespace AntaresClientApi.GrpcServices
 {
-    public partial class GrpcApiService 
+    public partial class GrpcApiService
     {
         [AllowAnonymous]
         public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
         {
+            _logger.LogInformation($"Login request: {request.ToJson()}");
             var validateResult = ValidateLoginRequest(request);
 
             if (validateResult != null)
@@ -262,14 +263,14 @@ namespace AntaresClientApi.GrpcServices
                         Field = nameof(request.PublicKey)
                     }
                 };
-            
+
             return null;
         }
 
         private bool ValidatePublicKey(string publicKey)
         {
             //todo: add validation for Key and enable empty string
-            return true; 
+            return true;
         }
     }
 }
