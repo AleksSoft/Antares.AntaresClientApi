@@ -22,7 +22,7 @@ namespace AntaresClientApi.Domain.Services
         private readonly IDbConnectionFactory _dbConnectionFactory;
 
         public MarketDataService(
-            IMyNoSqlServerDataReader<AssetsEntity> assetsReader, 
+            IMyNoSqlServerDataReader<AssetsEntity> assetsReader,
             IMyNoSqlServerDataReader<AssetPairsEntity> assetPairsReader,
             IMyNoSqlServerDataReader<OrderBookEntity> orderBookDataReader,
             IMyNoSqlServerDataReader<PriceEntity> priceDataReader,
@@ -74,7 +74,7 @@ namespace AntaresClientApi.Domain.Services
 
         public async Task<Asset> GetDefaultBaseAsset(string tenantId)
         {
-            //todo: add to asset service - is defaukt base asset flag for assets of defaukt asset property in asset list
+            //todo: add to asset service - is default base asset flag for assets of default asset property in asset list
 
             var assets = await GetAssetsByTenant(tenantId);
 

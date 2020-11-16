@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models.Exceptions;
 using AntaresClientApi.Domain.Models.MyNoSql;
 using Assets.Domain.Entities;
+using Common;
 using MatchingEngine.Client;
 using MatchingEngine.Client.Contracts.Incoming;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ namespace AntaresClientApi.Domain.Services
         {
             var operationId = Guid.NewGuid().ToString("N");
 
-            var request = new CashInOutOperation()
+            var request = new CashInOutOperation
             {
                 BrokerId = wallet.Client.TenantId,
                 AccountId = (ulong) wallet.Client.ClientId,
@@ -38,6 +39,8 @@ namespace AntaresClientApi.Domain.Services
                 Volume = amount.ToString(CultureInfo.InvariantCulture),
                 Id = operationId
             };
+
+            _logger.LogInformation($"CashInRequest: {request.ToJson()}");
 
             var response = await _matchingEngineClient.CashOperations.CashInOutAsync(request);
 

@@ -23,10 +23,9 @@ namespace AntaresClientApi.GrpcServices
                 return PlaceOrderErrorResponse(ErrorMessages.AssetPairNotFound, nameof(request.AssetPairId));
             }
 
-
             var absVolume = Math.Abs(request.Volume);
 
-            if (absVolume < (double) assetPair.MinVolume 
+            if (absVolume < (double) assetPair.MinVolume
                 || absVolume > (double)assetPair.MaxVolume
                 || absVolume * request.Price > (double)assetPair.MaxOppositeVolume)
             {
@@ -40,13 +39,13 @@ namespace AntaresClientApi.GrpcServices
 
             var walletId = await _clientWalletService.GetWalletIdAsync(session.TenantId, session.ClientId);
 
-            var meRequest = new LimitOrder()
+            var meRequest = new LimitOrder
             {
                 Id = Guid.NewGuid().ToString(),
                 AccountId = (ulong) session.ClientId,
                 BrokerId = session.TenantId,
                 WalletId = (ulong) walletId,
-                AssetPairId = assetPair.Symbol,
+                AssetPairId = assetPair.Id.ToString(),
                 Price = request.Price.ToString(CultureInfo.InvariantCulture),
                 Volume = request.Volume.ToString(CultureInfo.InvariantCulture),
                 Type = LimitOrder.Types.LimitOrderType.Limit,
@@ -59,12 +58,12 @@ namespace AntaresClientApi.GrpcServices
             {
                 return PlaceOrderErrorResponse(ErrorMessages.MeError(response.Status.ToString(), response.StatusReason), null);
             }
-            
-            return new PlaceOrderResponse()
+
+            return new PlaceOrderResponse
             {
-                Result = new PlaceOrderResponse.Types.OrderPayload()
+                Result = new PlaceOrderResponse.Types.OrderPayload
                 {
-                    Order = new OrderModel()
+                    Order = new OrderModel
                     {
                         Id = meRequest.Id,
                         AssetPair = meRequest.AssetPairId,
@@ -89,7 +88,6 @@ namespace AntaresClientApi.GrpcServices
                 return PlaceOrderErrorResponse(ErrorMessages.AssetPairNotFound, nameof(request.AssetPairId));
             }
 
-
             var absVolume = Math.Abs(request.Volume);
 
             if (absVolume < (double)assetPair.MinVolume
@@ -100,13 +98,13 @@ namespace AntaresClientApi.GrpcServices
 
             var walletId = await _clientWalletService.GetWalletIdAsync(session.TenantId, session.ClientId);
 
-            var meRequest = new MarketOrder()
+            var meRequest = new MarketOrder
             {
                 Id = Guid.NewGuid().ToString(),
                 AccountId = (ulong)session.ClientId,
                 BrokerId = session.TenantId,
                 WalletId = (ulong)walletId,
-                AssetPairId = assetPair.Symbol,
+                AssetPairId = assetPair.Id.ToString(),
                 Volume = request.Volume.ToString(CultureInfo.InvariantCulture),
                 Timestamp = Timestamp.FromDateTime(DateTime.UtcNow),
             };
@@ -118,11 +116,11 @@ namespace AntaresClientApi.GrpcServices
                 return PlaceOrderErrorResponse(ErrorMessages.MeError(response.Status.ToString(), response.StatusReason), null);
             }
 
-            return new PlaceOrderResponse()
+            return new PlaceOrderResponse
             {
-                Result = new PlaceOrderResponse.Types.OrderPayload()
+                Result = new PlaceOrderResponse.Types.OrderPayload
                 {
-                    Order = new OrderModel()
+                    Order = new OrderModel
                     {
                         Id = meRequest.Id,
                         AssetPair = meRequest.AssetPairId,
@@ -144,9 +142,9 @@ namespace AntaresClientApi.GrpcServices
 
             if (assetPair == null || assetPair.IsDisabled)
             {
-                return new CancelOrderResponse()
+                return new CancelOrderResponse
                 {
-                    Error = new Error()
+                    Error = new Error
                     {
                         Message = ErrorMessages.AssetPairNotFound
                     }
@@ -156,15 +154,15 @@ namespace AntaresClientApi.GrpcServices
             var walletId = await _clientWalletService.GetWalletIdAsync(session.TenantId, session.ClientId);
 
             var side = request.OptionalSideCase == CancelOrdersRequest.OptionalSideOneofCase.Side
-                ? (request.Side == Side.Buy ? true : false)
+                ? request.Side == Side.Buy
                 : (bool?)null;
 
-            var meRequest = new LimitOrderMassCancel()
+            var meRequest = new LimitOrderMassCancel
             {
                 Id = Guid.NewGuid().ToString(),
                 BrokerId = session.TenantId,
                 WalletId = (ulong)walletId,
-                AssetPairId = assetPair.Symbol,
+                AssetPairId = assetPair.Id.ToString(),
                 IsBuy = side
             };
 
@@ -172,16 +170,16 @@ namespace AntaresClientApi.GrpcServices
 
             if (response.Status != Status.Ok)
             {
-                return new CancelOrderResponse()
+                return new CancelOrderResponse
                 {
-                    Error = new Error()
+                    Error = new Error
                     {
                         Message = ErrorMessages.MeError(response.Status.ToString(), response.StatusReason)
                     }
                 };
             }
 
-            return new CancelOrderResponse() {Payload = true};
+            return new CancelOrderResponse {Payload = true};
         }
 
         public override async Task<CancelOrderResponse> CancelOrder(CancelOrderRequest request, ServerCallContext context)
@@ -192,8 +190,7 @@ namespace AntaresClientApi.GrpcServices
 
             //request.OrderId
 
-
-            var meRequest = new LimitOrderCancel()
+            var meRequest = new LimitOrderCancel
             {
                 Id = Guid.NewGuid().ToString(),
                 BrokerId = session.TenantId,
@@ -207,23 +204,23 @@ namespace AntaresClientApi.GrpcServices
 
             if (response.Status != Status.Ok && response.Status != Status.LimitOrderNotFound)
             {
-                return new CancelOrderResponse()
+                return new CancelOrderResponse
                 {
-                    Error = new Error()
+                    Error = new Error
                     {
                         Message = ErrorMessages.MeError(response.Status.ToString(), response.StatusReason)
                     }
                 };
             }
 
-            return new CancelOrderResponse() { Payload = true };
+            return new CancelOrderResponse { Payload = true };
         }
 
         private static PlaceOrderResponse PlaceOrderErrorResponse(string message, string field)
         {
-            var resp = new PlaceOrderResponse()
+            var resp = new PlaceOrderResponse
             {
-                Error = new ErrorV1()
+                Error = new ErrorV1
                 {
                     Code = ErrorModelCode.BadRequest.ToString(),
                     Message = message
