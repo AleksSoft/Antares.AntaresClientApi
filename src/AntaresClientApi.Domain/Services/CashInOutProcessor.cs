@@ -34,7 +34,7 @@ namespace AntaresClientApi.Domain.Services
                 BrokerId = wallet.Client.TenantId,
                 AccountId = (ulong) wallet.Client.ClientId,
                 WalletId = (ulong) wallet.WalletId,
-                AssetId = asset.Id.ToString(),
+                AssetId = asset.Symbol,
                 Description = comment,
                 Volume = amount.ToString(CultureInfo.InvariantCulture),
                 Id = operationId
