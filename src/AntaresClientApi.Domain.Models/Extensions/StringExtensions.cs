@@ -20,7 +20,7 @@ namespace AntaresClientApi.Domain.Models.Extensions
                 var bytes = Encoding.UTF8.GetBytes(input);
                 var hash = sha.ComputeHash(bytes);
 
-                return Convert.ToBase64String(hash);
+                return hash.BytesToString();
             }
         }
 
@@ -38,8 +38,19 @@ namespace AntaresClientApi.Domain.Models.Extensions
                 var bytes = Encoding.UTF8.GetBytes(input);
                 var hash = sha.ComputeHash(bytes);
 
-                return Convert.ToBase64String(hash);
+                return hash.BytesToString();
             }
+        }
+
+        private static string BytesToString(this byte[] bytes)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append(bytes[i].ToString("x2"));
+            }
+            return builder.ToString();
         }
     }
 }

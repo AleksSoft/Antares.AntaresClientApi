@@ -25,8 +25,8 @@ namespace AntaresClientApi.GrpcServices
             var session = SessionFromContext(context);
 
             var assets = await _marketDataService.GetAssetsByTenant(session.TenantId);
-                
-            
+
+
             var response = new AssetsDictionaryResponse();
 
             //todo: add all parameters in AssetService
@@ -34,7 +34,7 @@ namespace AntaresClientApi.GrpcServices
             {
                 response.Assets.Add(
                     new Asset(
-                        id: asset.Symbol,
+                        id: asset.Id.ToString(),
                         name: asset.Symbol,
                         symbol: asset.Symbol,
                         displayId:asset.Symbol,
@@ -43,7 +43,7 @@ namespace AntaresClientApi.GrpcServices
                         categoryId: DefaultAssetCategoryId,
                         cardDeposit: false,
                         swiftDeposit: false,
-                        blockchainDeposit: false, 
+                        blockchainDeposit: false,
                         swiftWithdrawal: false,
                         forwardWithdrawa: false,
                         crosschainWithdrawal: false,

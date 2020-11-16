@@ -12,6 +12,7 @@ using AntaresClientApi.Domain.Services.Mock;
 using AntaresClientApi.GrpcServices;
 using AntaresClientApi.GrpcServices.Authentication;
 using AntaresClientApi.Lifetime;
+using AntaresClientApi.Middleware;
 using Assets.Client;
 using Assets.Domain.MyNoSql;
 using Autofac;
@@ -39,6 +40,7 @@ namespace AntaresClientApi
         public Startup(IConfiguration configuration)
             : base(configuration)
         {
+            AddExceptionHandlingMiddleware<LogAllMiddleware>();
         }
 
         protected override void RegisterEndpoints(IEndpointRouteBuilder endpoints)
@@ -113,7 +115,6 @@ namespace AntaresClientApi
             builder.RegisterMatchingEngineClient(Config.MatchingEngine);
 
             builder.RegisterModule(new PostgresModule(Config.Db.MeWriterConnectionString, Config.Db.CandleConnectionString));
-
         }
 
         private void MyNoSql(ContainerBuilder builder)
@@ -151,7 +152,6 @@ namespace AntaresClientApi
             RegisterNoSqlReader<PriceEntity>(builder, PriceEntity.PriceTableName);
         }
 
-
         private void RegisterNoSqlReaderAndWriter<TEntity>(ContainerBuilder builder, string table) where TEntity : IMyNoSqlDbEntity, new()
         {
             RegisterNoSqlReader<TEntity>(builder, table);
@@ -180,5 +180,5 @@ namespace AntaresClientApi
         }
     }
 
-    
+
 }
