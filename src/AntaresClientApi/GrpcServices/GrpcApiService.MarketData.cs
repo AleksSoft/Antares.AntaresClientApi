@@ -29,7 +29,7 @@ namespace AntaresClientApi.GrpcServices
 
             var response = new AssetsDictionaryResponse();
 
-            var fiatAssets = new List<string>{"CHF", "EUR", "USA"};
+            var fiatAssets = new List<string>{"CHF", "EUR", "USD"};
             var cryptoAssets = new List<string>{"BTC", "ETH", "ETHtest", "BTCtest"};
             //todo: add all parameters in AssetService
             foreach (var asset in assets.Where(a => !a.IsDisabled))
