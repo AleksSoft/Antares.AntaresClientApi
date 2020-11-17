@@ -36,7 +36,7 @@ namespace AntaresClientApi.GrpcServices
             {
                 response.Assets.Add(
                     new Asset(
-                        id: asset.Id.ToString(),
+                        id: asset.Symbol,
                         name: asset.Symbol,
                         symbol: asset.Symbol,
                         displayId:asset.Symbol,
@@ -57,7 +57,7 @@ namespace AntaresClientApi.GrpcServices
 
             //todo: Add category
             response.Categories.Add(
-                new AssetCategory()
+                new AssetCategory
                 {
                     Id = DefaultAssetCategoryId,
                     IconUrl = AssetIconUrl,
@@ -77,7 +77,7 @@ namespace AntaresClientApi.GrpcServices
 
             foreach (var pair in pairs)
             {
-                response.AssetPairs.Add(new AssetPair()
+                response.AssetPairs.Add(new AssetPair
                 {
                     Id = pair.Symbol,
                     Accuracy = pair.Accuracy,
@@ -104,13 +104,13 @@ namespace AntaresClientApi.GrpcServices
                 data = data.Where(p => symbols.Contains(p.Symbol));
             }
 
-            var response = new PricesResponse()
+            var response = new PricesResponse
             {
                 Prices =
                 {
                     data.Select(p =>
 
-                            new PriceUpdate()
+                            new PriceUpdate
                             {
                                 AssetPairId = p.Symbol,
                                 Timestamp = Timestamp.FromDateTime(DateTime.SpecifyKind(p.LastUpdate, DateTimeKind.Utc)),
@@ -133,20 +133,20 @@ namespace AntaresClientApi.GrpcServices
 
             if (book == null || book.OrderBook == null)
             {
-                return new Orderbook()
+                return new Orderbook
                 {
                     AssetPairId = request.AssetPairId,
                     Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
                 };
             }
 
-            var response = new Orderbook()
+            var response = new Orderbook
             {
                 AssetPairId = book.OrderBook.Symbol,
                 Timestamp = Timestamp.FromDateTime(DateTime.SpecifyKind(book.OrderBook.Timestamp, DateTimeKind.Utc)),
                 Asks =
                 {
-                    book.OrderBook.LimitOrders.Where(o => o.Volume < 0).OrderBy(o => o.Price).Select(o => new Orderbook.Types.PriceVolume()
+                    book.OrderBook.LimitOrders.Where(o => o.Volume < 0).OrderBy(o => o.Price).Select(o => new Orderbook.Types.PriceVolume
                     {
                         P = o.Price.ToString(CultureInfo.InvariantCulture),
                         V = Math.Abs(o.Volume).ToString(CultureInfo.InvariantCulture)
@@ -154,7 +154,7 @@ namespace AntaresClientApi.GrpcServices
                 },
                 Bids =
                 {
-                    book.OrderBook.LimitOrders.Where(o => o.Volume > 0).OrderByDescending(o => o.Price).Select(o => new Orderbook.Types.PriceVolume()
+                    book.OrderBook.LimitOrders.Where(o => o.Volume > 0).OrderByDescending(o => o.Price).Select(o => new Orderbook.Types.PriceVolume
                     {
                         P = o.Price.ToString(CultureInfo.InvariantCulture),
                         V = Math.Abs(o.Volume).ToString(CultureInfo.InvariantCulture)
@@ -226,12 +226,12 @@ namespace AntaresClientApi.GrpcServices
                     toDate,
                     interval);
 
-                var result = new CandlesResponse()
+                var result = new CandlesResponse
                 {
                     Candles =
                     {
                         candles.OrderBy(c => c.Time)
-                            .Select(c => new Candle()
+                            .Select(c => new Candle
                             {
                                 Timestamp =
                                     Timestamp.FromDateTime(DateTime.SpecifyKind(c.Time, DateTimeKind.Utc)),
