@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AntaresClientApi.Domain.Models;
 using AntaresClientApi.Domain.Models.MyNoSql;
@@ -85,10 +86,21 @@ namespace AntaresClientApi.Domain.Services
             try
             {
                 var asset = await _marketDataService.GetDefaultBaseAsset(wallet.Client.TenantId);
+                var assets = await _marketDataService.GetAssetsByTenant(wallet.Client.TenantId);
+                var eur = assets.FirstOrDefault(x => x.Symbol == "EUR");
+
                 if (asset != null)
                 {
                     await _cashInOutProcessor.ChangeBalance(wallet,
                         asset,
+                        10000,
+                        "Deposit demo amount");
+                }
+
+                if (eur != null)
+                {
+                    await _cashInOutProcessor.ChangeBalance(wallet,
+                        eur,
                         10000,
                         "Deposit demo amount");
                 }
