@@ -34,7 +34,7 @@
   <ItemGroup>
     <PackageReference Include="Swisschain.Sdk.Server" Version="6.6.0" />
     <PackageReference Include="Swisschain.Service.Assets.Client" Version="1.1.5" />
-    <PackageReference Include="Swisschain.MatchingEngine.Client" Version="3.0.0-beta.3" />
+    <PackageReference Include="Swisschain.MatchingEngine.Client" Version="3.0.0-beta.4" />
   </ItemGroup>
 
   <ItemGroup>

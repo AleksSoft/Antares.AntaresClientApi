@@ -6,9 +6,11 @@ using AntaresClientApi.Domain.Services;
 using Flurl.Util;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using MatchingEngine.Client.Contracts.Balances;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Logging;
 using Swisschain.Lykke.AntaresWalletApi.ApiContract;
+using Balance = Swisschain.Lykke.AntaresWalletApi.ApiContract.Balance;
 
 namespace AntaresClientApi.GrpcServices
 {
@@ -54,18 +56,21 @@ namespace AntaresClientApi.GrpcServices
         public override async Task<BalancesResponse> GetBalances(Empty request, ServerCallContext context)
         {
             var session = SessionFromContext(context);
-
-            var balances = await _clientWalletService.GetClientBalances(session.TenantId, session.ClientId);
+            var balances = await _matchingEngineClient.Balances.GetAllAsync(new BalancesGetAllRequest
+            {
+                BrokerId = session.TenantId,
+                WalletId = (ulong)session.ClientId,
+            });
 
             var response = new BalancesResponse();
-            foreach (var balance in balances)
+            foreach (var balance in balances.Balances)
             {
-                response.Payload.Add(new Balance()
+                response.Payload.Add(new Balance
                 {
                     AssetId = balance.AssetId,
-                    Available = balance.Available.ToString(CultureInfo.InvariantCulture),
-                    Reserved = balance.Reserve.ToString(CultureInfo.InvariantCulture),
-                    Timestamp = Timestamp.FromDateTime(DateTime.SpecifyKind(balance.Timestamp, DateTimeKind.Utc))
+                    Available = balance.Amount.ToString(CultureInfo.InvariantCulture),
+                    Reserved = balance.Reserved.ToString(CultureInfo.InvariantCulture),
+                    Timestamp = balances.Timestamp
                 });
             }
 
@@ -100,7 +105,7 @@ namespace AntaresClientApi.GrpcServices
                 : string.Empty;
 
             var orders = await _clientWalletService.GetClientOrdersAsync(session.TenantId, session.ClientId, assetId);
-            
+
             var response = new LimitOrdersResponse()
             {
                 Result = new LimitOrdersResponse.Types.OrdersPayload()
@@ -147,7 +152,7 @@ namespace AntaresClientApi.GrpcServices
                 ? request.TradeType
                 : string.Empty;
 
-            var trades = await _clientWalletService.GetClientTradesAsync(session.TenantId, session.ClientId, 
+            var trades = await _clientWalletService.GetClientTradesAsync(session.TenantId, session.ClientId,
                 assetPairId, fromTime, toTime, side, request.Skip, request.Take);
 
             var resp = new TradesResponse();

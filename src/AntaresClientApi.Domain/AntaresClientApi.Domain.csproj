@@ -12,7 +12,7 @@
 
     <PackageReference Include="Swisschain.Service.Assets.Client" Version="1.1.5" />
 
-    <PackageReference Include="Swisschain.MatchingEngine.Client" Version="3.0.0-beta.3" />
+    <PackageReference Include="Swisschain.MatchingEngine.Client" Version="3.0.0-beta.4" />
     <PackageReference Include="Swisschain.Antares.OrderBooks.MyNoSql" Version="1.0.0" />
   </ItemGroup>
 
