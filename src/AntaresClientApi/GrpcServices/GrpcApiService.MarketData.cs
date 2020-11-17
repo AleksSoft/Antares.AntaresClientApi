@@ -81,10 +81,10 @@ namespace AntaresClientApi.GrpcServices
                 {
                     Id = pair.Symbol,
                     Accuracy = pair.Accuracy,
-                    BaseAssetId = pair.BaseAssetId.ToString(),
+                    BaseAssetId = pair.BaseAsset,
                     Name = pair.Symbol,
                     InvertedAccuracy = pair.Accuracy, //todo: add invert accuracy
-                    QuotingAssetId = pair.QuotingAssetId.ToString()
+                    QuotingAssetId = pair.QuotingAsset
                 });
             }
 
